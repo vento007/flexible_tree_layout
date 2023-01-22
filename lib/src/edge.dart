@@ -7,9 +7,11 @@ class Edge {
 
   Map<String, dynamic>? configuration = {};
 
+  /// use this constructor if you don't want to pass in a configuration.
   Edge(this.from, this.to) {
     configuration = {};
   }
 
+  /// use this constructor if you have custom configuration. format of the configuration is Map<String, dynamic>
   Edge.config(this.from, this.to, {required this.configuration});
 }

@@ -125,9 +125,9 @@ class FlexibleTreeLayout {
     maxDepth = nodes.map((node) => node.depth).reduce(max);
     for (var node in nodes) {
       node.x = node.depth * xOffSet;
-      int count = nodes.where((nod2) => nod2.depth == node.depth).length;
+      int count = nodes.where((n2) => n2.depth == node.depth).length;
       var offset = ((maxDepth + 0) / (count + 0));
-      node.y = offset * yOffSet + ((node.mody * yOffSet) + node.mody * 1);
+      node.y = offset * yOffSet + ((node.mody * yOffSet) + node.mody);
     }
 
     final double totalY = nodes

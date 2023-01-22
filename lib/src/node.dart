@@ -12,9 +12,9 @@ class Node {
 
   final Map<String, dynamic>? configuration;
 
-  /// use this constructor is you don't want to pass configuration. you can pass in any configuration of type Map<String, dynamic> and use this info when rendering your widget or in the customPainter
+  /// use this constructor if you don't want to pass in a configuration.  
   Node(this.name) : configuration = null;
 
-  /// use this constructor if you don't want to pass any configuration, if you have need custom configuration, use the dafault constructor.
+  /// use this constructor if you have custom configuration. format of the configuration is Map<String, dynamic>
   Node.config({required this.name, this.configuration = const {}});
 }
