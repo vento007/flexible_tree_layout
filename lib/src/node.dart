@@ -1,3 +1,5 @@
+
+/// Each node in the graph is represented by this class. use the default constructor if you don't want to pass any configuration, if you have need custom configuration, use the Node.config() constructor.
 class Node {
   String name;
 
