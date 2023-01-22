@@ -3,22 +3,21 @@ import 'package:flexible_tree_layout/flexible_tree_layout.dart';
 import 'package:flutter/material.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  MyApp({super.key});
+
+  FlexibleTreeLayout graph = FlexibleTreeLayout(
+      nodeSize: const Size(75, 75), // the size of each nodes
+      yOffSet: 125, // offset between each level
+      xOffSet: 150, // offset between each node
+      nodes: myNodes,
+      edges: myEdges);
 
   @override
   Widget build(BuildContext context) {
-    
-    FlexibleTreeLayout graph = FlexibleTreeLayout(
-        nodeSize: const Size(75, 75), // the size of each nodes
-        yOffSet: 125, // offset between each level
-        xOffSet: 150, // offset between each node
-        nodes: myNodes,
-        edges: myEdges);
-
     // can be used for positioning
     double totalWidth = graph.totalWidth; // total width of the graph
     double totalHeight = graph.totalHeight; // total height of the graph
@@ -49,8 +48,6 @@ class MyApp extends StatelessWidget {
               height: MediaQuery.of(context).size.height,
               child: Stack(
                 children: [
-
-
                   // an easy way to iterate over the calculated positioned and place the widgets in a stack
                   // with positioned() and the x,y from the graph
                   ...graph.nodes.map((node) {
@@ -66,8 +63,8 @@ class MyApp extends StatelessWidget {
                         );
                       }
 
-                      // checking if this specific node have a custom configuration and do 
-                      // some special case rendering.. in this case, it renders either a circle or 
+                      // checking if this specific node have a custom configuration and do
+                      // some special case rendering.. in this case, it renders either a circle or
                       // the flutter logo
 
                       if (node.configuration != null &&
@@ -152,7 +149,6 @@ class MyApp extends StatelessWidget {
     );
   }
 }
-
 
 // example painter that paints the line between nodes
 // you can use configuration map<String, dynamic> to add custom data to nodes and edges

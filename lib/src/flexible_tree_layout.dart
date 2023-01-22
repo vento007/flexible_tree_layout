@@ -6,7 +6,15 @@ import 'package:flexible_tree_layout/src/node.dart';
 import 'package:flutter/widgets.dart';
 
 /// This class is the core of the flexible tree layout package. you need to pass in [nodeSize], [yOffSet], [xOffSet], [nodes] and [edges]
-/// when creating an instance of this class. [nodeSize] is the size of each node, [yOffSet] is the offset between each level,
+/// when creating an instance of this class.
+///
+///
+/// [nodes] a List<Node> of all the nodes in the graph.
+/// [edges] a List<Edge> of all the edges in the graph.
+/// [yOffSet] is the offset between each level.
+/// [yOffSet] is the offset between each level.
+/// [nodeSize] is the size of each node.
+///
 class FlexibleTreeLayout {
   List<Node> nodes = [];
   List<Edge> edges = [];
