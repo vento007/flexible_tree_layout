@@ -1,7 +1,7 @@
 name: flexible_tree_layout
 description: A package that gives you a flexible tree layout class which can be used to create tree layouts with a simple node/child relationship.
 version: 0.0.5
-homepage: homepage: https://github.com/vento007/awesome_aurora_gradient
+homepage: homepage: https://github.com/vento007/flexible_tree_layout
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 
 environment:

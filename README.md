@@ -11,7 +11,15 @@ and the Flutter guide for
 [developing packages and plugins](https://flutter.dev/developing-packages).
 -->
 
-A class that offers a simple way to create a flexible tree layout in your app or webapp. You need to configure the Nodes and Edges, and in the render widget, you can customize it however you like. The class will calculate all coordinates used for positioning the boxes. You can use either a Stack or a CustomPainter widget to render the graph itself. The look and feel is completely up to you, as the core function of this package is to do the math. the core of this package uses a BFS type algoritm to calculate depts and on top of that a number of functions to calculate all the positioning used. 
+## Flexible Tree Layout
+
+<img src="https://github.com/vento007/flexible_tree_layout/blob/master/doc/images/flt.png" width="340" >
+
+A class that offers a simple way to create a flexible tree layout in your flutter app or webapp. You need to configure the Nodes and Edges, and in the render widget, you can customize it however you like. 
+
+The class will calculate all coordinates used for positioning the boxes and draw the lines. You can use either a Stack or a CustomPainter widget to render the graph itself. The lines will usually be rendered by a CustomPainter. 
+
+The look and feel is completely up to you, as the core function of this package is to do the math. the core of this package uses a BFS type algoritm to calculate depts and on top of that a number of functions to calculate all the positioning used. 
 
 ## Features
 
