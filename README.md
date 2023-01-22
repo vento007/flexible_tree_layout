@@ -13,7 +13,7 @@ and the Flutter guide for
 
 ## Flexible Tree Layout
 
-<img src="https://github.com/vento007/flexible_tree_layout/blob/master/doc/images/flt.png" width="340" >
+<img src="https://github.com/vento007/flexible_tree_layout/blob/master/doc/images/ftl.png" width="340" >
 
 A class that offers a simple way to create a flexible tree layout in your flutter app or webapp. You need to configure the Nodes and Edges, and in the render widget, you can customize it however you like. 
 
