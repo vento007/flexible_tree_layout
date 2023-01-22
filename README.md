@@ -13,7 +13,7 @@ and the Flutter guide for
 
 
 
-<img src="https://github.com/vento007/flexible_tree_layout/blob/master/doc/images/ftl.png" width="540" >
+<img src="https://github.com/vento007/flexible_tree_layout/blob/master/doc/images/ftl.png"  >
 
 ## Flexible Tree Layout
 
