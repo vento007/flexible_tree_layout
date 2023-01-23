@@ -9,18 +9,19 @@ void main() {
 class MyApp extends StatelessWidget {
   MyApp({super.key});
 
-  FlexibleTreeLayout graph = FlexibleTreeLayout(
+  final FlexibleTreeLayout graph = FlexibleTreeLayout(
       nodeSize: const Size(75, 75), // the size of each nodes
       yOffSet: 125, // offset between each level
       xOffSet: 150, // offset between each node
       nodes: myNodes,
+      vertical: true,
       edges: myEdges);
 
   @override
   Widget build(BuildContext context) {
     // can be used for positioning
-    double totalWidth = graph.totalWidth; // total width of the graph
-    double totalHeight = graph.totalHeight; // total height of the graph
+    // double totalWidth = graph.totalWidth; // total width of the graph
+    // double totalHeight = graph.totalHeight; // total height of the graph
 
     // various debug print for easier understanding
     // -------------------------------------------
@@ -37,6 +38,7 @@ class MyApp extends StatelessWidget {
 
     // print(graph.nodeSize);
 
+ 
     return MaterialApp(
       home: Scaffold(
         body: Builder(builder: (context) {
@@ -187,10 +189,25 @@ class MyPainter extends CustomPainter {
           canvas.drawLine(Offset(fromX, fromY), Offset(toX, fromY), p3);
           canvas.drawLine(Offset(toX, fromY), Offset(toX, toY), p3);
         } else {
+
+          // example of curvy horizontal lines
+          // canvas.drawPath(
+          //     Path()
+          //       ..moveTo(fromX, fromY)
+          //       ..cubicTo(fromX + 40, fromY, toX - 40, toY, toX, toY),
+          //     p2);
+
           canvas.drawPath(
               Path()
-                ..moveTo(fromX, fromY)
-                ..cubicTo(fromX + 40, fromY, toX - 40, toY, toX, toY),
+                ..moveTo(
+                    fromX - g.nodeSize.width / 2, fromY + g.nodeSize.height / 2)
+                ..cubicTo(
+                    fromX + 0,
+                    fromY + g.yOffSet / 2,
+                    toX - 0,
+                    toY - g.yOffSet / 2,
+                    toX + g.nodeSize.width / 2,
+                    toY - g.nodeSize.height / 2),
               p2);
         }
       }

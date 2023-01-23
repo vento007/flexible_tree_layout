@@ -19,26 +19,30 @@ class FlexibleTreeLayout {
   List<Node> nodes = [];
   List<Edge> edges = [];
 
-  int maxDepth = 0;
+  int _maxDepth = 0;
 
   double yOffSet = 75;
   double xOffSet = 75;
 
   Size nodeSize;
 
+  bool vertical = false;
+
   FlexibleTreeLayout(
       {required this.nodeSize,
       required this.yOffSet,
       required this.xOffSet,
       required this.nodes,
+      required this.vertical,
       required this.edges})
       : assert(nodes.isNotEmpty,
             'Graph must have atleast one node, please add atleast one node'),
         assert(edges.isNotEmpty,
             'Graph must have atleast one edge, please add atleast one edge') {
-    setDepthOfGraph();
+    _setDepthOfGraph();
   }
 
+ 
   void addNode(Node node) {
     nodes.add(node);
   }
@@ -74,21 +78,21 @@ class FlexibleTreeLayout {
     return totalHeight;
   }
 
-  void setDepthOfGraph() {
-    bfs();
+  void _setDepthOfGraph() {
+    _bfs();
     int maxDepth = 0;
     for (var node in nodes) {
       if (node.depth > maxDepth) {
         maxDepth = node.depth;
       }
     }
-    this.maxDepth = maxDepth;
+    _maxDepth = maxDepth;
 
-    sortByToplogy();
-    calcXY();
+    _sortByToplogy();
+    _calculateCordinates();
   }
 
-  void bfs() {
+  void _bfs() {
     int topologyCounter = 0;
     int mody = 0;
     for (var node in nodes) {
@@ -117,29 +121,43 @@ class FlexibleTreeLayout {
     }
   }
 
-  void sortByToplogy() {
+  void _sortByToplogy() {
     nodes.sort((a, b) => a.topology.compareTo(b.topology));
   }
 
-  void calcXY() {
-    maxDepth = nodes.map((node) => node.depth).reduce(max);
+  void _calculateCordinates() {
+    _maxDepth = nodes.map((node) => node.depth).reduce(max);
     for (var node in nodes) {
       node.x = node.depth * xOffSet;
       int count = nodes.where((n2) => n2.depth == node.depth).length;
-      var offset = ((maxDepth + 0) / (count + 0));
+      var offset = ((_maxDepth + 0) / (count + 0));
       node.y = offset * yOffSet + ((node.mody * yOffSet) + node.mody);
     }
 
     final double totalY = nodes
-        .where((node) => node.depth == maxDepth)
+        .where((node) => node.depth == _maxDepth)
         .map((node) => node.y)
         .reduce((value, element) => value + element);
-    final int count = nodes.where((node) => node.depth == maxDepth).length;
+    final int count = nodes.where((node) => node.depth == _maxDepth).length;
     nodes[0].y = totalY / count;
 
     final double minY = nodes.map((node) => node.y).reduce(min);
     for (var node in nodes) {
       node.y -= minY;
+    }
+
+    if (vertical == true) {
+      _reverseXY();
+    }
+  }
+
+  void _reverseXY() {
+    for (var node in nodes) {
+      var tmpx = node.x;
+      var tmpy = node.y;
+
+      node.x = tmpy;
+      node.y = tmpx;
     }
   }
 }

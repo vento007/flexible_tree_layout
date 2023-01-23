@@ -10,7 +10,8 @@ The look and feel is completely up to you, as the core function of this package 
 Fully customizable, use Stack or CustomPainter for the rendering itself.
 not opinionated, but a very flexible layout class
 pass in custom key/values for total control of the rendering.
-What this is not
+
+## What this is not
 If you are looking for complex diagrams, such as nodes with edges to grandchildren, this package is not suitable. It renders graphs similar to illustrations. If your dataset is not very similar to the illustrations, you might want to look for a Buchheim Walker algorithm-style solution.
 
 ### Getting started
