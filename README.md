@@ -1,4 +1,4 @@
-![](https://github.com/vento007/flexible_tree_layout/blob/master/doc/images/.gif)
+![](https://github.com/vento007/flexible_tree_layout/blob/master/doc/images/flt.gif)
 
 ## Flexible Tree Layout
 
