@@ -1,152 +1,205 @@
-import 'package:example/data.dart';
+import 'dart:async';
+import 'dart:math';
+
+import 'package:example/helpers/random_color.dart';
+import 'package:example/helpers/randomicon.dart';
+import 'package:example/helpers/randomname.dart';
 import 'package:flexible_tree_layout/flexible_tree_layout.dart';
 import 'package:flutter/material.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(const Loader());
 }
 
-class MyApp extends StatelessWidget {
-  MyApp({super.key});
-
-  final FlexibleTreeLayout graph = FlexibleTreeLayout(
-      nodeSize: const Size(75, 75), // the size of each nodes
-      yOffSet: 125, // offset between each level
-      xOffSet: 150, // offset between each node
-      nodes: myNodes,
-      vertical: true,
-      edges: myEdges);
+class Loader extends StatelessWidget {
+  const Loader({super.key});
 
   @override
   Widget build(BuildContext context) {
-    // can be used for positioning
-    // double totalWidth = graph.totalWidth; // total width of the graph
-    // double totalHeight = graph.totalHeight; // total height of the graph
+    return const MaterialApp(home: Scaffold(body: GenerateRandomTrees()));
+  }
+}
 
-    // various debug print for easier understanding
-    // -------------------------------------------
-    // for (var node in graph.nodes) {
-    //   print('node: ${node.name} x: ${node.x} y: ${node.y}');
-    //   if (node.configuration != null) print(node.configuration);
-    // }
+class GenerateRandomTrees extends StatefulWidget {
+  const GenerateRandomTrees({super.key});
 
-    // for (var edge in graph.edges) {
-    //   print('edge: ${edge.from.name} -> ${edge.to.name}');
-    //   // print configuration
-    //   if (edge.configuration != null) print(edge.configuration);
-    // }
+  @override
+  State<GenerateRandomTrees> createState() => _GenerateRandomTreesState();
+}
 
-    // print(graph.nodeSize);
+class _GenerateRandomTreesState extends State<GenerateRandomTrees> {
+  FlexibleTreeLayout? graph;
 
- 
-    return MaterialApp(
-      home: Scaffold(
-        body: Builder(builder: (context) {
-          return Padding(
-            padding: const EdgeInsets.all(200),
-            child: Center(
-                child: SizedBox(
-              width: MediaQuery.of(context).size.width,
-              height: MediaQuery.of(context).size.height,
-              child: Stack(
-                children: [
-                  // an easy way to iterate over the calculated positioned and place the widgets in a stack
-                  // with positioned() and the x,y from the graph
-                  ...graph.nodes.map((node) {
-                    return Builder(builder: (context) {
-                      if (node.configuration != null &&
-                          node.configuration!['style'] == 'flutterlogo') {
-                        return Positioned(
-                          left: node.x,
-                          top: node.y,
-                          child: FlutterLogo(
-                            size: graph.nodeSize.width,
-                          ),
-                        );
-                      }
+  var i = 10;
 
-                      // checking if this specific node have a custom configuration and do
-                      // some special case rendering.. in this case, it renders either a circle or
-                      // the flutter logo
+  @override
+  void initState() {
+    // every second
+    Timer.periodic(const Duration(milliseconds: 800), (timer) {
+      setState(() {
+        // i > 20 ? i =20 : i++;
 
-                      if (node.configuration != null &&
-                          node.configuration!['style'] == 'sometext') {
-                        return Positioned(
-                            left: node.x,
-                            top: node.y,
-                            child: Container(
-                              width: graph.nodeSize.width,
-                              height: graph.nodeSize.width,
-                              decoration: const BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: Colors.white,
-                                border: Border(
-                                  top: BorderSide(
-                                      width: 1.0, color: Colors.black),
-                                  left: BorderSide(
-                                      width: 1.0, color: Colors.black),
-                                  right: BorderSide(
-                                      width: 1.0, color: Colors.black),
-                                  bottom: BorderSide(
-                                      width: 1.0, color: Colors.black),
-                                ),
-                              ),
-                            ));
-                      }
+        // random i between 5 and 15
+        i = Random().nextInt(10) + 5;
+        i++;
+        List<Node> myNodes = List.generate(i, (index) {
+          // random color
+          ColorModel color = randomColor();
 
-                      var colors = {
-                        '0': Colors.red,
-                        '1': Colors.blue,
-                        'A': Colors.green,
-                        '2': Colors.blue,
-                        '20': Colors.blue,
-                        '22': Colors.blue,
-                        '10': Colors.blue,
-                        '10A': Colors.blue,
-                        '12': Colors.green,
-                        'B': Colors.black,
-                        '112': Colors.black,
-                        'z': Colors.white,
-                      };
+          return Node.config(name: (index + 1).toString(), configuration: {
+            'color': color.color,
+          });
+        });
 
-                      // no configuration found, just render the default box
-                      // -----------------------------------------------
+        int flipYrandom = Random().nextInt(2);
+        bool flipY = flipYrandom == 0 ? true : false;
 
-                      return Positioned(
-                        left: node.x,
-                        top: node.y,
-                        child: Container(
-                          decoration: BoxDecoration(
-                            border: Border.all(color: Colors.black),
-                            color: colors[node.name] ?? Colors.black45,
-                          ),
-                          width: graph.nodeSize.width,
-                          height: graph.nodeSize.height,
-                          child: Center(
-                            child: Text(
-                              node.name,
-                              style: const TextStyle(color: Colors.white),
-                            ),
-                          ),
+        // centerLayout based on random
+        flipYrandom = Random().nextInt(2);
+        bool centerLayout = flipYrandom == 0 ? true : false;
+
+        List<Edge> myEdges = [];
+
+        for (var i = 0; i < myNodes.length; i++) {
+          if (i == 0) {
+            continue;
+          }
+
+          int random = Random().nextInt(i);
+
+          myEdges.add(Edge(myNodes[random], myNodes[i]));
+        }
+
+        // random double 125 to 200
+
+        var randomOffset = Random().nextDouble() * 25 + 125;
+
+        graph = FlexibleTreeLayout(
+            nodeSize:
+                Size(110, randomOffset - 75.toInt()), // the size of each nodes
+            offset: randomOffset, // the offset between each level
+            nodes: myNodes,
+            vertical: true,
+            centerLayout: centerLayout,
+            flipY: flipY,
+            edges: myEdges);
+      });
+    });
+
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (graph == null) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    var externalRandom = Random().nextInt(100);
+
+    return Center(
+      child: Container(
+        color: Colors.transparent,
+        width: graph!.totalWidth,
+        height: graph!.totalHeight,
+        child: Stack(
+          children: [
+            // an easy way to iterate over the calculated positioned and place the widgets in a stack
+            // with positioned() and the x,y from the graph
+            ...graph!.nodes.map((node) {
+              return Builder(builder: (context) {
+                // checking if this specific node have a custom configuration and do
+                // some special case rendering.. in this case, it renders either a circle or
+                // the flutter logo
+
+                // generate random number between 0 and 1
+                // if 0, render circle
+                // if 1, render flutter logo
+
+                if (externalRandom < 35) {
+                  return Positioned(
+                    left: node.x,
+                    top: node.y,
+                    child: SizedBox(
+                      width: graph!.nodeSize.width,
+                      height: graph!.nodeSize.height,
+                      child: const Center(
+                        child: RandomIcon(),
+                      ),
+                    ),
+                  );
+                }
+
+                if (externalRandom > 35 && externalRandom < 70) {
+                  return Positioned(
+                    left: node.x,
+                    top: node.y,
+                    child: SizedBox(
+                      width: graph!.nodeSize.width,
+                      height: graph!.nodeSize.height,
+                      child: const Center(
+                        child: RandomNames(),
+                      ),
+                    ),
+                  );
+                }
+
+                int random = Random().nextInt(105);
+
+                List<Color> colors = [
+                  const Color(0xff227c9d),
+                  const Color(0xff17c3b2),
+                  const Color(0xffffcb77),
+                  const Color(0xfff36d73),
+                  const Color(0xff264653),
+                  const Color(0xff264653),
+                  const Color(0xff264653),
+                  const Color(0xff264653),
+                  Colors.black,
+                  Colors.white,
+                  Colors.white,
+                ];
+
+                int rl = Random().nextInt(colors.length);
+                Color c = colors[rl];
+
+                return Positioned(
+                  left: node.x,
+                  top: node.y,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.black),
+                      color: c,
+                    ),
+                    width: graph!.nodeSize.width,
+                    height: graph!.nodeSize.height,
+                    child: Builder(builder: (context) {
+                      // random bool to decide if the text should be rendered or not
+                      // this is just to show how to use the configuration map
+
+                      return Center(
+                        child: Text(
+                          node.name,
+                          style: const TextStyle(color: Colors.black),
                         ),
                       );
-                    });
-                  }).toList(),
-                  Positioned(
-                    // note: the position of the custom painter that draw the lines
-                    // needs to be the same as the box rendering of the nodes above
-                    // there are other ways to do this, but this is an easy way to get started
-                    left: 0,
-                    top: 0,
-                    child: CustomPaint(
-                      painter: MyPainter(g: graph),
-                    ),
+                    }),
                   ),
-                ],
+                );
+              });
+            }).toList(),
+            Positioned(
+              // note: the position of the custom painter that draw the lines
+              // needs to be the same as the box rendering of the nodes above
+              // there are other ways to do this, but this is an easy way to get started
+              left: 0,
+              top: 0,
+              child: CustomPaint(
+                painter: MyPainter(g: graph!),
               ),
-            )),
-          );
-        }),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -163,54 +216,71 @@ class MyPainter extends CustomPainter {
   MyPainter({required this.g});
   @override
   void paint(Canvas canvas, Size size) {
+    bool r = Random().nextBool();
+
     final p2 = Paint()
-      ..color = Colors.black45
-      ..strokeWidth = 1
+      ..color = Colors.black
+      ..strokeWidth = (r) ? 0.5 : 1.5
       ..style = PaintingStyle.stroke;
 
+    // random number of 100
+    int random = Random().nextInt(100);
     for (var edge in g.edges) {
-      double fromX = edge.from.x + g.nodeSize.width;
-      double fromY = edge.from.y + g.nodeSize.height / 2;
-      double toX = edge.to.x + 0;
-      double toY = edge.to.y + g.nodeSize.height / 2;
+      Node fromNode = edge.from;
+      Node toNode = edge.to;
 
-      if (edge.configuration != null) {
-        if (edge.configuration!['someCustomKey'] == 'righToTop') {
-          fromX = edge.from.x + g.nodeSize.width;
-          fromY = edge.from.y + g.nodeSize.height / 2;
-          toX = edge.to.x + g.nodeSize.width / 2;
-          toY = edge.to.y + g.nodeSize.height - g.nodeSize.height;
+      var betweenBoxes = (g.offset - g.nodeSize.height) / 2;
 
-          final p3 = Paint()
-            ..color = edge.configuration!['color']
-            ..strokeWidth = 1
-            ..style = PaintingStyle.stroke;
+      var p = Path();
 
-          canvas.drawLine(Offset(fromX, fromY), Offset(toX, fromY), p3);
-          canvas.drawLine(Offset(toX, fromY), Offset(toX, toY), p3);
+      if (random < 50) {
+        // if flipped
+        if (g.flipY) {
+          p = Path();
+          p.moveTo(fromNode.bottomCenter.dx, fromNode.bottomCenter.dy);
+          p.lineTo(fromNode.bottomCenter.dx,
+              fromNode.bottomCenter.dy - betweenBoxes);
+          p.lineTo(
+              toNode.topCenter.dx, fromNode.bottomCenter.dy - betweenBoxes);
+          p.lineTo(toNode.topCenter.dx, toNode.topCenter.dy);
+          canvas.drawPath(p, p2);
         } else {
-
-          // example of curvy horizontal lines
-          // canvas.drawPath(
-          //     Path()
-          //       ..moveTo(fromX, fromY)
-          //       ..cubicTo(fromX + 40, fromY, toX - 40, toY, toX, toY),
-          //     p2);
-
-          canvas.drawPath(
-              Path()
-                ..moveTo(
-                    fromX - g.nodeSize.width / 2, fromY + g.nodeSize.height / 2)
-                ..cubicTo(
-                    fromX + 0,
-                    fromY + g.yOffSet / 2,
-                    toX - 0,
-                    toY - g.yOffSet / 2,
-                    toX + g.nodeSize.width / 2,
-                    toY - g.nodeSize.height / 2),
-              p2);
+          p.moveTo(fromNode.bottomCenter.dx, fromNode.bottomCenter.dy);
+          p.lineTo(fromNode.bottomCenter.dx,
+              fromNode.bottomCenter.dy + betweenBoxes);
+          p.lineTo(
+              toNode.topCenter.dx, fromNode.bottomCenter.dy + betweenBoxes);
+          p.lineTo(toNode.topCenter.dx, toNode.topCenter.dy);
+          canvas.drawPath(p, p2);
         }
+      } else {
+        p.moveTo(fromNode.bottomCenter.dx, fromNode.bottomCenter.dy);
+
+        // Control point for the first curve
+        var cp1x = fromNode.bottomCenter.dx;
+        var cp1y = fromNode.bottomCenter.dy + betweenBoxes;
+
+        // Control point for the second curve
+        var cp2x = toNode.topCenter.dx;
+        var cp2y = fromNode.bottomCenter.dy + betweenBoxes;
+
+        // End point of the curve
+        var endx = toNode.topCenter.dx;
+        var endy = toNode.topCenter.dy;
+
+        // if flipy, change control points, instead ad adding, subtract
+        if (g.flipY) {
+          cp1y = fromNode.bottomCenter.dy - betweenBoxes;
+          cp2y = fromNode.bottomCenter.dy - betweenBoxes;
+        }
+
+        // Draw cubic bezier curve
+        p.cubicTo(cp1x, cp1y, cp2x, cp2y, endx, endy);
+
+        canvas.drawPath(p, p2);
       }
+
+      // }
     }
   }
 

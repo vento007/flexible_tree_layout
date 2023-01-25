@@ -1,18 +1,17 @@
 import 'dart:collection';
-import 'dart:math';
 
 import 'package:flexible_tree_layout/src/edge.dart';
 import 'package:flexible_tree_layout/src/node.dart';
 import 'package:flutter/widgets.dart';
 
-/// This class is the core of the flexible tree layout package. you need to pass in [nodeSize], [yOffSet], [xOffSet], [nodes] and [edges]
+/// This class is the core of the flexible tree layout package. you need to pass in [nodeSize], [_yOffSet], [_xOffSet], [nodes] and [edges]
 /// when creating an instance of this class.
 ///
 ///
 /// [nodes] a List<Node> of all the nodes in the graph.
 /// [edges] a List<Edge> of all the edges in the graph.
-/// [yOffSet] is the offset between each level.
-/// [yOffSet] is the offset between each level.
+/// [_yOffSet] is the offset between each level.
+/// [_yOffSet] is the offset between each level.
 /// [nodeSize] is the size of each node.
 ///
 class FlexibleTreeLayout {
@@ -21,30 +20,56 @@ class FlexibleTreeLayout {
 
   int _maxDepth = 0;
 
-  double yOffSet = 75;
-  double xOffSet = 75;
+  double _yOffSet = 75;
+  double _xOffSet = 75;
+  double offset = 0;
 
   Size nodeSize;
+  bool centerLayout;
+  bool flipY;
 
   bool vertical = false;
 
   FlexibleTreeLayout(
       {required this.nodeSize,
-      required this.yOffSet,
-      required this.xOffSet,
+      // required this.yOffSet,
+      // required this.xOffSet,
+      this.centerLayout = true,
+      required this.offset,
       required this.nodes,
+      this.flipY = false,
       required this.vertical,
       required this.edges})
       : assert(nodes.isNotEmpty,
             'Graph must have atleast one node, please add atleast one node'),
+        //  assert that offset is greater than nodeSize
+        assert(offset > nodeSize.width,
+            'Offset must be greater than nodeSize.width'),
         assert(edges.isNotEmpty,
             'Graph must have atleast one edge, please add atleast one edge') {
-    _setDepthOfGraph();
+    _yOffSet = offset;
+    _xOffSet = offset;
+
+    _main();
   }
 
- 
+// getter graphsize
+  Size get graphSize => Size(totalWidth, totalHeight);
+
+  void updateInsertOrder() {
+    var i = 0;
+
+    for (Node n in nodes) {
+      n.insertorder = i;
+      i++;
+    }
+  }
+
   void addNode(Node node) {
-    nodes.add(node);
+    var l = nodes.length;
+
+    Node newNode = node.copyWith(insertorder: l);
+    nodes.add(newNode);
   }
 
   void addEdge(Node from, Node to) {
@@ -60,7 +85,7 @@ class FlexibleTreeLayout {
       }
     }
 
-    totalWidth += xOffSet;
+    totalWidth += nodeSize.width;
 
     return totalWidth;
   }
@@ -74,12 +99,37 @@ class FlexibleTreeLayout {
       }
     }
 
-    totalHeight += yOffSet;
+    totalHeight += nodeSize.height;
     return totalHeight;
   }
 
-  void _setDepthOfGraph() {
+  void _main() {
+    // calculate
     _bfs();
+
+    // set x position modifier
+    _setModx();
+
+    // calculate coordinates
+    _calculateCordinates();
+
+    // flip the graph upside down
+    if (flipY) {
+      _calculateCordinatesFlipY();
+    }
+
+    // position nodes
+    positionNodes(nodes, _maxDepth, totalWidth);
+
+    // calculate edge border points 
+    _calculateEdgeBorderPoints();
+
+    if (flipY) {
+      _flipEdgeBorderPoints();
+    }
+  }
+
+  int findMaxDepth() {
     int maxDepth = 0;
     for (var node in nodes) {
       if (node.depth > maxDepth) {
@@ -87,31 +137,84 @@ class FlexibleTreeLayout {
       }
     }
     _maxDepth = maxDepth;
+    return maxDepth;
+  }
 
-    _sortByToplogy();
-    _calculateCordinates();
+  void _calculateCordinatesFlipY() {
+    for (var node in nodes) {
+      node.y = totalHeight - node.y;
+    }
+
+    nodes[0].y += // height
+        nodeSize.height / 1;
+  }
+
+  void positionNodes(List<Node> nodes, int maxDepth, double totalWidth) {
+    if (centerLayout == false) return;
+
+    for (int depth = 0; depth <= maxDepth; depth++) {
+      // filter out nodes that don't have the desired depth
+      List<Node> filteredNodes =
+          nodes.where((node) => node.depth == depth).toList();
+
+      int nodeCount = filteredNodes.length;
+      double nodeWidth = totalWidth / (nodeCount + 1);
+
+      for (int i = 0; i < nodeCount; i++) {
+        filteredNodes[i].x = (i + 1) * nodeWidth;
+      }
+    }
+
+    // shift everything left so that the leftmost node is at x = 0
+    double minX = double.infinity;
+    for (var node in nodes) {
+      if (node.x < minX) {
+        minX = node.x;
+      }
+    }
+
+    for (var node in nodes) {
+      node.x -= minX;
+    }
+
+    // shift everything so the topmost node is at y = 0
+    double minY = double.infinity;
+    for (var node in nodes) {
+      if (node.y < minY) {
+        minY = node.y;
+      }
+    }
+
+    for (var node in nodes) {
+      node.y -= minY;
+    }
+  }
+
+  void _setModx() {
+    for (var depth = 0; depth <= _maxDepth; depth++) {
+      int modx = 0;
+      for (var node in nodes) {
+        if (node.depth == depth) {
+          node.modx = modx;
+          modx++;
+        }
+      }
+    }
   }
 
   void _bfs() {
-    int topologyCounter = 0;
-    int mody = 0;
     for (var node in nodes) {
       node.depth = 0;
       node.topology = 0;
     }
-    Node prevNode = Node('');
+
+    int topologyCounter = 0;
     Queue<Node> queue = Queue<Node>();
     queue.add(nodes[0]);
+
     while (queue.isNotEmpty) {
       Node current = queue.removeFirst();
       current.topology = topologyCounter++;
-      if (current.depth == prevNode.depth) {
-        mody++;
-      } else {
-        mody = 1;
-      }
-      current.mody = mody;
-      prevNode = current;
       for (Edge edge in edges) {
         if (edge.from == current) {
           edge.to.depth = current.depth + 1;
@@ -119,45 +222,51 @@ class FlexibleTreeLayout {
         }
       }
     }
-  }
+    // Sort nodes by depth and topology
+    nodes.sort((a, b) {
+      if (a.depth == b.depth) {
+        return a.topology.compareTo(b.topology);
+      }
+      return a.depth.compareTo(b.depth);
+    });
 
-  void _sortByToplogy() {
-    nodes.sort((a, b) => a.topology.compareTo(b.topology));
+    findMaxDepth();
   }
 
   void _calculateCordinates() {
-    _maxDepth = nodes.map((node) => node.depth).reduce(max);
     for (var node in nodes) {
-      node.x = node.depth * xOffSet;
-      int count = nodes.where((n2) => n2.depth == node.depth).length;
-      var offset = ((_maxDepth + 0) / (count + 0));
-      node.y = offset * yOffSet + ((node.mody * yOffSet) + node.mody);
-    }
-
-    final double totalY = nodes
-        .where((node) => node.depth == _maxDepth)
-        .map((node) => node.y)
-        .reduce((value, element) => value + element);
-    final int count = nodes.where((node) => node.depth == _maxDepth).length;
-    nodes[0].y = totalY / count;
-
-    final double minY = nodes.map((node) => node.y).reduce(min);
-    for (var node in nodes) {
-      node.y -= minY;
-    }
-
-    if (vertical == true) {
-      _reverseXY();
+      node.x = ((node.modx) * _xOffSet);
+      node.y = node.depth * _yOffSet;
     }
   }
 
-  void _reverseXY() {
+  void _calculateEdgeBorderPoints() {
     for (var node in nodes) {
-      var tmpx = node.x;
-      var tmpy = node.y;
+      var centerRightx = node.x + nodeSize.width;
+      var centerRightY = node.y + nodeSize.height / 2;
+      node.rightCenter = Offset(centerRightx, centerRightY);
 
-      node.x = tmpy;
-      node.y = tmpx;
+      var centerLeftx = node.x;
+      var centerLeftY = node.y + nodeSize.height / 2;
+      node.leftCenter = Offset(centerLeftx, centerLeftY);
+
+      var centerTopx = node.x + nodeSize.width / 2;
+      var centerTopY = node.y;
+      node.topCenter = Offset(centerTopx, centerTopY);
+
+      var centerBottomx = node.x + nodeSize.width / 2;
+      var centerBottomY = node.y + nodeSize.height;
+      node.bottomCenter = Offset(centerBottomx, centerBottomY);
+    }
+  }
+
+  // flipy Centerpoints
+  void _flipEdgeBorderPoints() {
+    // flip bottom and top
+    for (var node in nodes) {
+      var tmp = node.topCenter;
+      node.topCenter = node.bottomCenter;
+      node.bottomCenter = tmp;
     }
   }
 }
