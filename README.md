@@ -1,4 +1,9 @@
+
 ![example reel](https://github.com/vento007/flexible_tree_layout/blob/master/doc/images/examples.gif)
+
+![example](https://github.com/vento007/flexible_tree_layout/blob/master/doc/images/examples.gif))
+
+
 
 ## Flexible Tree Layout
 
