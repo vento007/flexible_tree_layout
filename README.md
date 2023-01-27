@@ -1,5 +1,5 @@
 
-![example reel](https://github.com/vento007/flexible_tree_layout/blob/master/doc/images/examples2.gif)
+![reel](https://github.com/vento007/flexible_tree_layout/blob/master/doc/images/examples2.gif)
 
 ## Flexible Tree Layout
 
@@ -28,4 +28,4 @@ Clone the project, and then run the example code. Depending on your target platf
 ### Additional information
 This is a work in progress. If you find any issues, please open a GitHub issue. Pull requests are welcome, and if there is enough interest, I will extend it with additional functionality
 
-![example reel 2](https://github.com/vento007/flexible_tree_layout/blob/master/doc/images/examples2.gif)
+ 
