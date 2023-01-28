@@ -65,15 +65,40 @@ class FlexibleTreeLayout {
     }
   }
 
+  bool nodeExist(Node node) {
+    for (Node n in nodes) {
+      if (n.name == node.name) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  bool edgeExist(Edge edge) {
+    for (Edge e in edges) {
+      if (e.from.name == edge.from.name && e.to.name == edge.to.name) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   void addNode(Node node) {
     var l = nodes.length;
 
     Node newNode = node.copyWith(insertorder: l);
+    if (nodeExist(newNode)) {
+      return;
+    }
     nodes.add(newNode);
   }
 
   void addEdge(Node from, Node to) {
-    edges.add(Edge(from, to));
+    Edge newEdge = Edge(from, to);
+    if (edgeExist(newEdge)) {
+      return;
+    }
+    edges.add(newEdge);
   }
 
   double get totalWidth {
@@ -121,7 +146,7 @@ class FlexibleTreeLayout {
     // position nodes
     positionNodes(nodes, _maxDepth, totalWidth);
 
-    // calculate edge border points 
+    // calculate edge border points
     _calculateEdgeBorderPoints();
 
     if (flipY) {
