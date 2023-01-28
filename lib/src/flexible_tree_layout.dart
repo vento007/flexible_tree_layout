@@ -65,6 +65,16 @@ class FlexibleTreeLayout {
     }
   }
 
+  // get node
+  Node getNode(String name) {
+    for (Node n in nodes) {
+      if (n.name == name) {
+        return n;
+      }
+    }
+    return Node('');
+  }
+
   bool nodeExist(Node node) {
     for (Node n in nodes) {
       if (n.name == node.name) {
