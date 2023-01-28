@@ -237,23 +237,25 @@ class FlexibleTreeLayout {
     }
   }
 
-  void _bfs() {
+
+void _bfs() {
     for (var node in nodes) {
-      node.depth = 0;
+      node.depth = -1;
       node.topology = 0;
     }
-
     int topologyCounter = 0;
     Queue<Node> queue = Queue<Node>();
     queue.add(nodes[0]);
-
+    nodes[0].depth = 0;
     while (queue.isNotEmpty) {
       Node current = queue.removeFirst();
       current.topology = topologyCounter++;
       for (Edge edge in edges) {
         if (edge.from == current) {
-          edge.to.depth = current.depth + 1;
-          queue.add(edge.to);
+          if(edge.to.depth == -1){
+            edge.to.depth = current.depth + 1;
+            queue.add(edge.to);
+          }
         }
       }
     }
@@ -267,6 +269,39 @@ class FlexibleTreeLayout {
 
     findMaxDepth();
   }
+
+
+
+  // void _bfs() {
+  //   for (var node in nodes) {
+  //     node.depth = 0;
+  //     node.topology = 0;
+  //   }
+
+  //   int topologyCounter = 0;
+  //   Queue<Node> queue = Queue<Node>();
+  //   queue.add(nodes[0]);
+
+  //   while (queue.isNotEmpty) {
+  //     Node current = queue.removeFirst();
+  //     current.topology = topologyCounter++;
+  //     for (Edge edge in edges) {
+  //       if (edge.from == current) {
+  //         edge.to.depth = current.depth + 1;
+  //         queue.add(edge.to);
+  //       }
+  //     }
+  //   }
+  //   // Sort nodes by depth and topology
+  //   nodes.sort((a, b) {
+  //     if (a.depth == b.depth) {
+  //       return a.topology.compareTo(b.topology);
+  //     }
+  //     return a.depth.compareTo(b.depth);
+  //   });
+
+  //   findMaxDepth();
+  // }
 
   void _calculateCordinates() {
     for (var node in nodes) {
