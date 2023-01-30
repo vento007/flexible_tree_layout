@@ -36,74 +36,73 @@ class _GenerateRandomTreesState extends State<GenerateRandomTrees> {
   void initState() {
     // every second
     // Timer.periodic(const Duration(milliseconds: 800), (timer) {
-      setState(() {
-        // i > 20 ? i =20 : i++;
+    setState(() {
+      // i > 20 ? i =20 : i++;
 
-        // random i between 5 and 15
-        i = Random().nextInt(10) + 5;
-        i++;
-        List<Node> myNodes = List.generate(i, (index) {
-          // random color
-          ColorModel color = randomColor();
+      // random i between 5 and 15
+      i = Random().nextInt(10) + 5;
+      i++;
+      List<Node> myNodes = List.generate(i, (index) {
+        // random color
+        ColorModel color = randomColor();
 
-          return Node.config(name: (index + 1).toString(), configuration: {
-            'color': color.color,
-          });
+        return Node.config(name: (index + 1).toString(), configuration: {
+          'color': color.color,
         });
+      });
 
-        int flipYrandom = Random().nextInt(2);
-        bool flipY = flipYrandom == 0 ? true : false;
+      int flipYrandom = Random().nextInt(2);
+      bool flipY = flipYrandom == 0 ? true : false;
 
-        // centerLayout based on random
-        flipYrandom = Random().nextInt(2);
-        bool centerLayout = flipYrandom == 0 ? true : false;
+      // centerLayout based on random
+      flipYrandom = Random().nextInt(2);
+      bool centerLayout = flipYrandom == 0 ? true : false;
 
-        List<Edge> myEdges = [];
+      List<Edge> myEdges = [];
 
-        for (var i = 0; i < myNodes.length; i++) {
-          if (i == 0) {
-            continue;
-          }
-
-          int random = Random().nextInt(i);
-
-          myEdges.add(Edge(myNodes[random], myNodes[i]));
+      for (var i = 0; i < myNodes.length; i++) {
+        if (i == 0) {
+          continue;
         }
 
-        // random double 125 to 200
+        int random = Random().nextInt(i);
 
-        var randomOffset = Random().nextDouble() * 25 + 125;
+        myEdges.add(Edge(myNodes[random], myNodes[i]));
+      }
 
-        graph = FlexibleTreeLayout(
-            nodeSize:
-                Size(110, randomOffset - 75.toInt()), // the size of each nodes
-            offset: randomOffset, // the offset between each level
-            nodes: myNodes,
-            vertical: true,
-            centerLayout: centerLayout,
-            flipY: flipY,
-            edges: myEdges);
+      // random double 125 to 200
 
-        // debug
-       for (var node in graph!.nodes) {
-         print("name ${node.name} parent ${node.parents.map((e) => e.name)} children ${node.children.map((e) => e.name)}");
-       }
+      var randomOffset = Random().nextDouble() * 25 + 125;
 
+      graph = FlexibleTreeLayout(
+          nodeSize:
+              Size(110, randomOffset - 75.toInt()), // the size of each nodes
+          offset: randomOffset, // the offset between each level
+          nodes: myNodes,
+          vertical: true,
+          centerLayout: centerLayout,
+          flipY: flipY,
+          edges: myEdges);
 
-      Node destNode = graph!.nodes[graph!.nodes.length - 3];
-      print ("destnode is ${destNode.name}");
+      // debug
+      for (var node in graph!.nodes) {
+        print(
+            "name ${node.name} parent ${node.parents.map((e) => e.name)} children ${node.children.map((e) => e.name)}");
+      }
 
+      Node destNode = graph!.nodes[graph!.nodes.length - 1];
+      print("destnode is ${destNode.name}");
 
-       var findPath = graph!.findPath(graph!.nodes[0], destNode);
-       print (findPath.map((e) => e.name).toList());
+      var findPath = graph!.findAllPaths(graph!.nodes[0], destNode);
+      findPath.forEach((e) {
+        print("path ${e.map((e) => e.name)}");
+      });
+
+      var isCyclic = graph!.isCyclic();
+      print("isCyclic $isCyclic");
 
       // });
     });
-
-
-    
-
-
 
     super.initState();
   }

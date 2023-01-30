@@ -237,6 +237,33 @@ class FlexibleTreeLayout {
     }
   }
 
+
+
+bool isCyclic() {
+    Set<Node> visited = new Set<Node>();
+    for (var node in nodes) {
+        if (isCyclicHelper(node, visited)) {
+            return true;
+        }
+    }
+    return false;
+}
+
+bool isCyclicHelper(Node current, Set<Node> visited) {
+    if (visited.contains(current)) {
+        return true;
+    }
+    visited.add(current);
+    for (Node child in  current.children) {
+        if (isCyclicHelper(child, visited)) {
+            return true;
+        }
+    }
+    return false;
+}
+
+
+
 // find path between two nodes
   List<Node> findPath(Node from, Node to) {
     List<Node> path = [];
@@ -250,20 +277,26 @@ class FlexibleTreeLayout {
     return path;
   }
 
-  // find all possible paths between two nodes
-  List<List<Node>> findAllPaths(Node from, Node to) {
-    List<List<Node>> paths = [];
-    List<Node> path = [];
-    Node current = to;
-    while (current != from) {
-      path.add(current);
-      current = current.parents[0];
-    }
-    path.add(from);
-    path = path.reversed.toList();
-    paths.add(path);
-    return paths;
+List<List<Node>> findAllPaths(Node from, Node to) {
+  List<List<Node>> paths = [];
+  List<Node> path = [];
+  findAllPathsHelper(from, to, path, paths);
+  return paths;
+}
+
+void findAllPathsHelper(Node current, Node to, List<Node> path, List<List<Node>> paths) {
+  if (current == to) {
+    path.add(to);
+    paths.add(path.toList());
+    path.removeLast();
+    return;
   }
+  path.add(current);
+  for (Node child in current.children) {
+    findAllPathsHelper(child, to, path, paths);
+  }
+  path.removeLast();
+}
 
   void _bfs() {
     for (var node in nodes) {
