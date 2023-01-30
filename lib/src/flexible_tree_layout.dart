@@ -250,6 +250,21 @@ class FlexibleTreeLayout {
     return path;
   }
 
+  // find all possible paths between two nodes
+  List<List<Node>> findAllPaths(Node from, Node to) {
+    List<List<Node>> paths = [];
+    List<Node> path = [];
+    Node current = to;
+    while (current != from) {
+      path.add(current);
+      current = current.parents[0];
+    }
+    path.add(from);
+    path = path.reversed.toList();
+    paths.add(path);
+    return paths;
+  }
+
   void _bfs() {
     for (var node in nodes) {
       node.depth = -1;
