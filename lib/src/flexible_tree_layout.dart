@@ -237,8 +237,20 @@ class FlexibleTreeLayout {
     }
   }
 
+// find path between two nodes
+  List<Node> findPath(Node from, Node to) {
+    List<Node> path = [];
+    Node current = to;
+    while (current != from) {
+      path.add(current);
+      current = current.parents[0];
+    }
+    path.add(from);
+    path = path.reversed.toList();
+    return path;
+  }
 
-void _bfs() {
+  void _bfs() {
     for (var node in nodes) {
       node.depth = -1;
       node.topology = 0;
@@ -250,11 +262,22 @@ void _bfs() {
     while (queue.isNotEmpty) {
       Node current = queue.removeFirst();
       current.topology = topologyCounter++;
-      for (Edge edge in edges) {
+ for (Edge edge in edges) {
         if (edge.from == current) {
-          if(edge.to.depth == -1){
+          if (edge.to.depth == -1) {
             edge.to.depth = current.depth + 1;
+            if (!current.children.contains(edge.to)) {
+              current.children.add(edge.to);
+            }
+            edge.to.parents.add(current);
             queue.add(edge.to);
+          }
+        } else if (edge.to == current) {
+          if (!current.parents.contains(edge.from)) {
+            current.parents.add(edge.from);
+          }
+          if (!edge.from.children.contains(current)) {
+            edge.from.children.add(current);
           }
         }
       }
@@ -269,39 +292,6 @@ void _bfs() {
 
     findMaxDepth();
   }
-
-
-
-  // void _bfs() {
-  //   for (var node in nodes) {
-  //     node.depth = 0;
-  //     node.topology = 0;
-  //   }
-
-  //   int topologyCounter = 0;
-  //   Queue<Node> queue = Queue<Node>();
-  //   queue.add(nodes[0]);
-
-  //   while (queue.isNotEmpty) {
-  //     Node current = queue.removeFirst();
-  //     current.topology = topologyCounter++;
-  //     for (Edge edge in edges) {
-  //       if (edge.from == current) {
-  //         edge.to.depth = current.depth + 1;
-  //         queue.add(edge.to);
-  //       }
-  //     }
-  //   }
-  //   // Sort nodes by depth and topology
-  //   nodes.sort((a, b) {
-  //     if (a.depth == b.depth) {
-  //       return a.topology.compareTo(b.topology);
-  //     }
-  //     return a.depth.compareTo(b.depth);
-  //   });
-
-  //   findMaxDepth();
-  // }
 
   void _calculateCordinates() {
     for (var node in nodes) {

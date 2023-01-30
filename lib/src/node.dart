@@ -17,6 +17,9 @@ class Node {
   Offset topCenter =  Offset.zero;
   Offset bottomCenter = Offset.zero;
 
+  List<Node> parents = [];
+  List<Node> children = [];
+
   int childrenCount = 0;
 
   final Map<String, dynamic>? configuration;
@@ -35,6 +38,8 @@ class Node {
     int? mody,
     double? x,
     double? y,
+    List<Node>? parents,   
+    List<Node>? children,  
     int? depth,
     int? topology,
     int? insertorder,
@@ -53,6 +58,8 @@ class Node {
       ..mody = mody ?? this.mody
       ..x = x ?? this.x
       ..y = y ?? this.y
+      ..parents = parents ?? this.parents
+      ..children = children ?? this.children
       ..depth = depth ?? this.depth
       ..topology = topology ?? this.topology
       ..insertorder = insertorder ?? this.insertorder

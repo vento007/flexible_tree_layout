@@ -35,7 +35,7 @@ class _GenerateRandomTreesState extends State<GenerateRandomTrees> {
   @override
   void initState() {
     // every second
-    Timer.periodic(const Duration(milliseconds: 800), (timer) {
+    // Timer.periodic(const Duration(milliseconds: 800), (timer) {
       setState(() {
         // i > 20 ? i =20 : i++;
 
@@ -83,8 +83,27 @@ class _GenerateRandomTreesState extends State<GenerateRandomTrees> {
             centerLayout: centerLayout,
             flipY: flipY,
             edges: myEdges);
-      });
+
+        // debug
+       for (var node in graph!.nodes) {
+         print("name ${node.name} parent ${node.parents.map((e) => e.name)} children ${node.children.map((e) => e.name)}");
+       }
+
+
+      Node destNode = graph!.nodes[graph!.nodes.length - 3];
+      print ("destnode is ${destNode.name}");
+
+
+       var findPath = graph!.findPath(graph!.nodes[0], destNode);
+       print (findPath.map((e) => e.name).toList());
+
+      // });
     });
+
+
+    
+
+
 
     super.initState();
   }
