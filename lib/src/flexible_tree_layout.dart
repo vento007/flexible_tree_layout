@@ -42,9 +42,6 @@ class FlexibleTreeLayout {
       required this.edges})
       : assert(nodes.isNotEmpty,
             'Graph must have atleast one node, please add atleast one node'),
-        //  assert that offset is greater than nodeSize
-        assert(offset > nodeSize.width,
-            'Offset must be greater than nodeSize.width'),
         assert(edges.isNotEmpty,
             'Graph must have atleast one edge, please add atleast one edge') {
   
