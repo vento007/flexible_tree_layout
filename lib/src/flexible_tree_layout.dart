@@ -20,8 +20,8 @@ class FlexibleTreeLayout {
 
   int _maxDepth = 0;
 
-  double _yOffSet = 75;
-  double _xOffSet = 75;
+  // double _yOffSet = 75;
+  // double _xOffSet = 75;
   double offset = 0;
 
   Size nodeSize;
@@ -47,8 +47,7 @@ class FlexibleTreeLayout {
             'Offset must be greater than nodeSize.width'),
         assert(edges.isNotEmpty,
             'Graph must have atleast one edge, please add atleast one edge') {
-    _yOffSet = offset;
-    _xOffSet = offset;
+  
 
     _main();
   }
@@ -343,8 +342,8 @@ void findAllPathsHelper(Node current, Node to, List<Node> path, List<List<Node>>
 
   void _calculateCordinates() {
     for (var node in nodes) {
-      node.x = ((node.modx) * _xOffSet);
-      node.y = node.depth * _yOffSet;
+      node.x = ((node.modx) * offset);
+      node.y = node.depth * offset;
     }
   }
 
