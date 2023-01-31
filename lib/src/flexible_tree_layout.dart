@@ -342,8 +342,13 @@ void findAllPathsHelper(Node current, Node to, List<Node> path, List<List<Node>>
 
   void _calculateCordinates() {
     for (var node in nodes) {
-      node.x = ((node.modx) * offset);
-      node.y = node.depth * offset;
+
+      // use nodeSide + offset
+      node.x = ((node.modx) * (nodeSize.width + offset));
+      node.y = node.depth * (nodeSize.height + offset);
+
+      // node.x = ((node.modx) * offset);
+      // node.y = node.depth * offset;
     }
   }
 
