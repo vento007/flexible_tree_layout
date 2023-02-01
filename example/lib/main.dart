@@ -1,11 +1,11 @@
 import 'dart:async';
 import 'dart:math';
 
-import 'package:example/helpers/random_color.dart';
-import 'package:example/helpers/randomicon.dart';
-import 'package:example/helpers/randomname.dart';
 import 'package:flexible_tree_layout/flexible_tree_layout.dart';
 import 'package:flutter/material.dart';
+import './helpers/random_color.dart';
+import './helpers/randomicon.dart';
+import './helpers/randomname.dart';
 
 void main() {
   runApp(const Loader());
@@ -40,7 +40,7 @@ class _GenerateRandomTreesState extends State<GenerateRandomTrees> {
       // i > 20 ? i =20 : i++;
 
       // random i between 5 and 15
-      i = Random().nextInt(10) + 5;
+      i = Random().nextInt(10) + 45;
       i++;
       List<Node> myNodes = List.generate(i, (index) {
         // random color
@@ -76,12 +76,13 @@ class _GenerateRandomTreesState extends State<GenerateRandomTrees> {
 
       graph = FlexibleTreeLayout(
           nodeSize:
-              Size(110, randomOffset - 75.toInt()), // the size of each nodes
-          offset: randomOffset, // the offset between each level
+              Size(120,40), // the size of each nodes
+          offset: Offset(50,11), // the offset between each level
           nodes: myNodes,
-          vertical: true,
-          centerLayout: centerLayout,
-          flipY: flipY,
+          flipAxis: true,
+          // vertical: false,
+
+          centerLayout: true,
           edges: myEdges);
 
       // debug
@@ -94,9 +95,9 @@ class _GenerateRandomTreesState extends State<GenerateRandomTrees> {
       print("destnode is ${destNode.name}");
 
       var findPath = graph!.findAllPaths(graph!.nodes[0], destNode);
-      findPath.forEach((e) {
+      for (var e in findPath) {
         print("path ${e.map((e) => e.name)}");
-      });
+      }
 
       var isCyclic = graph!.isCyclic();
       print("isCyclic $isCyclic");
@@ -134,33 +135,33 @@ class _GenerateRandomTreesState extends State<GenerateRandomTrees> {
                 // if 0, render circle
                 // if 1, render flutter logo
 
-                if (externalRandom < 35) {
-                  return Positioned(
-                    left: node.x,
-                    top: node.y,
-                    child: SizedBox(
-                      width: graph!.nodeSize.width,
-                      height: graph!.nodeSize.height,
-                      child: const Center(
-                        child: RandomIcon(),
-                      ),
-                    ),
-                  );
-                }
+                // if (externalRandom < 35) {
+                //   return Positioned(
+                //     left: node.x,
+                //     top: node.y,
+                //     child: SizedBox(
+                //       width: graph!.nodeSize.width,
+                //       height: graph!.nodeSize.height,
+                //       child: const Center(
+                //         child: RandomIcon(),
+                //       ),
+                //     ),
+                //   );
+                // }
 
-                if (externalRandom > 35 && externalRandom < 70) {
-                  return Positioned(
-                    left: node.x,
-                    top: node.y,
-                    child: SizedBox(
-                      width: graph!.nodeSize.width,
-                      height: graph!.nodeSize.height,
-                      child: const Center(
-                        child: RandomNames(),
-                      ),
-                    ),
-                  );
-                }
+                // if (externalRandom > 35 && externalRandom < 70) {
+                //   return Positioned(
+                //     left: node.x,
+                //     top: node.y,
+                //     child: SizedBox(
+                //       width: graph!.nodeSize.width,
+                //       height: graph!.nodeSize.height,
+                //       child: const Center(
+                //         child: RandomNames(),
+                //       ),
+                //     ),
+                //   );
+                // }
 
                 int random = Random().nextInt(105);
 
@@ -206,16 +207,16 @@ class _GenerateRandomTreesState extends State<GenerateRandomTrees> {
                 );
               });
             }).toList(),
-            Positioned(
-              // note: the position of the custom painter that draw the lines
-              // needs to be the same as the box rendering of the nodes above
-              // there are other ways to do this, but this is an easy way to get started
-              left: 0,
-              top: 0,
-              child: CustomPaint(
-                painter: MyPainter(g: graph!),
-              ),
-            ),
+            // Positioned(
+            //   // note: the position of the custom painter that draw the lines
+            //   // needs to be the same as the box rendering of the nodes above
+            //   // there are other ways to do this, but this is an easy way to get started
+            //   left: 0,
+            //   top: 0,
+            //   child: CustomPaint(
+            //     painter: MyPainter(g: graph!),
+            //   ),
+            // ),
           ],
         ),
       ),
@@ -247,27 +248,33 @@ class MyPainter extends CustomPainter {
       Node fromNode = edge.from;
       Node toNode = edge.to;
 
-      var betweenBoxes = (g.offset - g.nodeSize.height) / 2;
+      var betweenBoxesX = (g.offset.dx - g.nodeSize.width) / 2;
+      var betweenBoxesY = (g.offset.dy - g.nodeSize.height) / 2;
+
+      Offset betweenBoxesOffset = Offset(betweenBoxesX, betweenBoxesY);
+
+          //  = (g.offset - g.nodeSize.height) / 2;
 
       var p = Path();
 
       if (random < 50) {
         // if flipped
-        if (g.flipY) {
+        if (1 == 2) {
+          // if (g.flipY) {
           p = Path();
           p.moveTo(fromNode.bottomCenter.dx, fromNode.bottomCenter.dy);
           p.lineTo(fromNode.bottomCenter.dx,
-              fromNode.bottomCenter.dy - betweenBoxes);
+              fromNode.bottomCenter.dy - betweenBoxesOffset.dx);
           p.lineTo(
-              toNode.topCenter.dx, fromNode.bottomCenter.dy - betweenBoxes);
+              toNode.topCenter.dx, fromNode.bottomCenter.dy - betweenBoxesOffset.dx);
           p.lineTo(toNode.topCenter.dx, toNode.topCenter.dy);
           canvas.drawPath(p, p2);
         } else {
           p.moveTo(fromNode.bottomCenter.dx, fromNode.bottomCenter.dy);
           p.lineTo(fromNode.bottomCenter.dx,
-              fromNode.bottomCenter.dy + betweenBoxes);
+              fromNode.bottomCenter.dy + betweenBoxesOffset.dx);
           p.lineTo(
-              toNode.topCenter.dx, fromNode.bottomCenter.dy + betweenBoxes);
+              toNode.topCenter.dx, fromNode.bottomCenter.dy + betweenBoxesOffset.dx);
           p.lineTo(toNode.topCenter.dx, toNode.topCenter.dy);
           canvas.drawPath(p, p2);
         }
@@ -276,20 +283,21 @@ class MyPainter extends CustomPainter {
 
         // Control point for the first curve
         var cp1x = fromNode.bottomCenter.dx;
-        var cp1y = fromNode.bottomCenter.dy + betweenBoxes;
+        var cp1y = fromNode.bottomCenter.dy + betweenBoxesOffset.dx;
 
         // Control point for the second curve
         var cp2x = toNode.topCenter.dx;
-        var cp2y = fromNode.bottomCenter.dy + betweenBoxes;
+        var cp2y = fromNode.bottomCenter.dy + betweenBoxesOffset.dx;
 
         // End point of the curve
         var endx = toNode.topCenter.dx;
         var endy = toNode.topCenter.dy;
 
         // if flipy, change control points, instead ad adding, subtract
-        if (g.flipY) {
-          cp1y = fromNode.bottomCenter.dy - betweenBoxes;
-          cp2y = fromNode.bottomCenter.dy - betweenBoxes;
+        if (1 == 2) {
+          // if (g.flipY) {
+          cp1y = fromNode.bottomCenter.dy - betweenBoxesOffset.dx;
+          cp2y = fromNode.bottomCenter.dy - betweenBoxesOffset.dx;
         }
 
         // Draw cubic bezier curve

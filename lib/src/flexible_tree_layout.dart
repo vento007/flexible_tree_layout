@@ -22,13 +22,14 @@ class FlexibleTreeLayout {
 
   // double _yOffSet = 75;
   // double _xOffSet = 75;
-  double offset = 0;
+  Offset offset = (Offset.zero);
 
   Size nodeSize;
   bool centerLayout;
-  bool flipY;
+  bool flipAxis;
+  // bool flipY;
 
-  bool vertical = false;
+  // bool vertical = false;
 
   FlexibleTreeLayout(
       {required this.nodeSize,
@@ -37,15 +38,14 @@ class FlexibleTreeLayout {
       this.centerLayout = true,
       required this.offset,
       required this.nodes,
-      this.flipY = false,
-      required this.vertical,
+      this.flipAxis = false,
+      // this.flipY = false,
+      // required this.vertical,
       required this.edges})
       : assert(nodes.isNotEmpty,
             'Graph must have atleast one node, please add atleast one node'),
         assert(edges.isNotEmpty,
             'Graph must have atleast one edge, please add atleast one edge') {
-  
-
     _main();
   }
 
@@ -141,23 +141,32 @@ class FlexibleTreeLayout {
     // set x position modifier
     _setModx();
 
+    // iterate and print all modx, mody
+    for (var node in nodes) {
+      print(
+          'node: ${node.name} depth: ${node.depth}     modx: ${node.modx} mody: ${node.mody}');
+    }
+
+    if (flipAxis) {
+      // change depth with modx
+      for (var node in nodes) {
+        var newDepth = node.modx;
+        var newModx = node.depth;
+
+        node.depth = newDepth;
+        node.modx = newModx;
+      }
+    }
+
     // calculate coordinates
     _calculateCordinates();
 
-    // flip the graph upside down
-    if (flipY) {
-      _calculateCordinatesFlipY();
-    }
+   
 
-    // position nodes
-    positionNodes(nodes, _maxDepth, totalWidth);
+    // positionNodes(nodes, _maxDepth, totalWidth);
 
     // calculate edge border points
     _calculateEdgeBorderPoints();
-
-    if (flipY) {
-      _flipEdgeBorderPoints();
-    }
   }
 
   int findMaxDepth() {
@@ -178,6 +187,15 @@ class FlexibleTreeLayout {
 
     nodes[0].y += // height
         nodeSize.height / 1;
+  }
+
+  void positionNodesFlippedAxis(
+
+      List<Node> nodes, int maxDepth, double totalWidth) {
+    if (centerLayout == false) return;
+
+    
+    
   }
 
   void positionNodes(List<Node> nodes, int maxDepth, double totalWidth) {
@@ -228,37 +246,35 @@ class FlexibleTreeLayout {
         if (node.depth == depth) {
           node.modx = modx;
           modx++;
+          node.mody = depth;
         }
       }
     }
+ 
   }
 
-
-
-bool isCyclic() {
+  bool isCyclic() {
     Set<Node> visited = new Set<Node>();
     for (var node in nodes) {
-        if (isCyclicHelper(node, visited)) {
-            return true;
-        }
+      if (isCyclicHelper(node, visited)) {
+        return true;
+      }
     }
     return false;
-}
+  }
 
-bool isCyclicHelper(Node current, Set<Node> visited) {
+  bool isCyclicHelper(Node current, Set<Node> visited) {
     if (visited.contains(current)) {
-        return true;
+      return true;
     }
     visited.add(current);
-    for (Node child in  current.children) {
-        if (isCyclicHelper(child, visited)) {
-            return true;
-        }
+    for (Node child in current.children) {
+      if (isCyclicHelper(child, visited)) {
+        return true;
+      }
     }
     return false;
-}
-
-
+  }
 
 // find path between two nodes
   List<Node> findPath(Node from, Node to) {
@@ -273,26 +289,27 @@ bool isCyclicHelper(Node current, Set<Node> visited) {
     return path;
   }
 
-List<List<Node>> findAllPaths(Node from, Node to) {
-  List<List<Node>> paths = [];
-  List<Node> path = [];
-  findAllPathsHelper(from, to, path, paths);
-  return paths;
-}
+  List<List<Node>> findAllPaths(Node from, Node to) {
+    List<List<Node>> paths = [];
+    List<Node> path = [];
+    findAllPathsHelper(from, to, path, paths);
+    return paths;
+  }
 
-void findAllPathsHelper(Node current, Node to, List<Node> path, List<List<Node>> paths) {
-  if (current == to) {
-    path.add(to);
-    paths.add(path.toList());
+  void findAllPathsHelper(
+      Node current, Node to, List<Node> path, List<List<Node>> paths) {
+    if (current == to) {
+      path.add(to);
+      paths.add(path.toList());
+      path.removeLast();
+      return;
+    }
+    path.add(current);
+    for (Node child in current.children) {
+      findAllPathsHelper(child, to, path, paths);
+    }
     path.removeLast();
-    return;
   }
-  path.add(current);
-  for (Node child in current.children) {
-    findAllPathsHelper(child, to, path, paths);
-  }
-  path.removeLast();
-}
 
   void _bfs() {
     for (var node in nodes) {
@@ -306,7 +323,7 @@ void findAllPathsHelper(Node current, Node to, List<Node> path, List<List<Node>>
     while (queue.isNotEmpty) {
       Node current = queue.removeFirst();
       current.topology = topologyCounter++;
- for (Edge edge in edges) {
+      for (Edge edge in edges) {
         if (edge.from == current) {
           if (edge.to.depth == -1) {
             edge.to.depth = current.depth + 1;
@@ -339,10 +356,9 @@ void findAllPathsHelper(Node current, Node to, List<Node> path, List<List<Node>>
 
   void _calculateCordinates() {
     for (var node in nodes) {
-
       // use nodeSide + offset
-      node.x = ((node.modx) * (nodeSize.width + offset));
-      node.y = node.depth * (nodeSize.height + offset);
+      node.x = ((node.modx) * (nodeSize.width + offset.dx));
+      node.y = node.depth * (nodeSize.height + offset.dy);
 
       // node.x = ((node.modx) * offset);
       // node.y = node.depth * offset;
@@ -366,6 +382,20 @@ void findAllPathsHelper(Node current, Node to, List<Node> path, List<List<Node>>
       var centerBottomx = node.x + nodeSize.width / 2;
       var centerBottomY = node.y + nodeSize.height;
       node.bottomCenter = Offset(centerBottomx, centerBottomY);
+    }
+
+    if (flipAxis) {
+      _rotateEdgeBorderPoints();
+    }
+  }
+
+  _rotateEdgeBorderPoints() {
+    for (var node in nodes) {
+      var tmp = node.topCenter;
+      node.topCenter = node.leftCenter;
+      node.leftCenter = node.bottomCenter;
+      node.bottomCenter = node.rightCenter;
+      node.rightCenter = tmp;
     }
   }
 
