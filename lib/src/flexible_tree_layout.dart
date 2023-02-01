@@ -384,20 +384,20 @@ class FlexibleTreeLayout {
       node.bottomCenter = Offset(centerBottomx, centerBottomY);
     }
 
-    if (flipAxis) {
-      _rotateEdgeBorderPoints();
-    }
+    // if (flipAxis) {
+    //   _rotateEdgeBorderPoints();
+    // }
   }
 
-  _rotateEdgeBorderPoints() {
-    for (var node in nodes) {
-      var tmp = node.topCenter;
-      node.topCenter = node.leftCenter;
-      node.leftCenter = node.bottomCenter;
-      node.bottomCenter = node.rightCenter;
-      node.rightCenter = tmp;
-    }
-  }
+  // _rotateEdgeBorderPoints() {
+  //   for (var node in nodes) {
+  //     var tmp = node.topCenter;
+  //     node.topCenter = node.leftCenter;
+  //     node.leftCenter = node.bottomCenter;
+  //     node.bottomCenter = node.rightCenter;
+  //     node.rightCenter = tmp;
+  //   }
+  // }
 
   // flipy Centerpoints
   void _flipEdgeBorderPoints() {
