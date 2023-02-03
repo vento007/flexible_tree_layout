@@ -40,13 +40,23 @@ class _GenerateRandomTreesState extends State<GenerateRandomTrees> {
       // i > 20 ? i =20 : i++;
 
       // random i between 5 and 15
-      i = Random().nextInt(10) + 45;
+      i = Random().nextInt(10) + 15;
+ 
+      // random double 100-150
+
       i++;
       List<Node> myNodes = List.generate(i, (index) {
+
+        // randomDouble between 0 and 100
+        var randomDouble = Random().nextDouble() * 100;
+            
+
         // random color
         ColorModel color = randomColor();
-
-        return Node.config(name: (index + 1).toString(), configuration: {
+        
+        return Node.config(name: (index + 1).toString(), 
+        size: Size(200, 100.0+randomDouble),
+        configuration: {
           'color': color.color,
         });
       });
@@ -72,14 +82,14 @@ class _GenerateRandomTreesState extends State<GenerateRandomTrees> {
 
       // random double 125 to 200
 
-      var randomOffset = Random().nextDouble() * 25 + 125;
+      var randomOffset = Random().nextDouble() * 100;
 
       graph = FlexibleTreeLayout(
-          nodeSize:
-              Size(120,40), // the size of each nodes
-          offset: Offset(50,11), // the offset between each level
+          // nodeSize:
+          //     Size(120,60), // the size of each nodes
+          offset: Offset(50,50), // the offset between each level
           nodes: myNodes,
-          flipAxis: true,
+          // flipAxis: true,
           // vertical: false,
 
           centerLayout: true,
@@ -116,13 +126,36 @@ class _GenerateRandomTreesState extends State<GenerateRandomTrees> {
 
     var externalRandom = Random().nextInt(100);
 
+    print ("total height ${graph!.totalHeight} total width ${graph!.totalWidth}");
+
     return Center(
       child: Container(
-        color: Colors.transparent,
+        
         width: graph!.totalWidth,
-        height: graph!.totalHeight,
+        height: graph!.totalHeight   ,
+
+        // decoration
+        // rounded corners
+        // border
+        // shadow
+        // color
+        // padding
+
+      
+
+        
         child: Stack(
           children: [
+                 Positioned(
+              // note: the position of the custom painter that draw the lines
+              // needs to be the same as the box rendering of the nodes above
+              // there are other ways to do this, but this is an easy way to get started
+              left: 0,
+              top: 0,
+              child: CustomPaint(
+                painter: MyPainter(g: graph!),
+              ),
+            ),
             // an easy way to iterate over the calculated positioned and place the widgets in a stack
             // with positioned() and the x,y from the graph
             ...graph!.nodes.map((node) {
@@ -186,12 +219,27 @@ class _GenerateRandomTreesState extends State<GenerateRandomTrees> {
                   left: node.x,
                   top: node.y,
                   child: Container(
-                    decoration: BoxDecoration(
-                      border: Border.all(color: Colors.black),
-                      color: c,
-                    ),
-                    width: graph!.nodeSize.width,
-                    height: graph!.nodeSize.height,
+
+  decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(color: Colors.grey),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.withOpacity(0.5),
+              spreadRadius: 5,
+              blurRadius: 7,
+              offset: const Offset(0, 3), // changes position of shadow
+            ),
+          ],
+        ),
+
+                    // decoration: BoxDecoration(
+                    //   border: Border.all(color: Colors.black),
+                    //   color: c,
+                    // ),
+                    width:node.size.width,
+                    height: node.size.height,
                     child: Builder(builder: (context) {
                       // random bool to decide if the text should be rendered or not
                       // this is just to show how to use the configuration map
@@ -207,16 +255,7 @@ class _GenerateRandomTreesState extends State<GenerateRandomTrees> {
                 );
               });
             }).toList(),
-            // Positioned(
-            //   // note: the position of the custom painter that draw the lines
-            //   // needs to be the same as the box rendering of the nodes above
-            //   // there are other ways to do this, but this is an easy way to get started
-            //   left: 0,
-            //   top: 0,
-            //   child: CustomPaint(
-            //     painter: MyPainter(g: graph!),
-            //   ),
-            // ),
+       
           ],
         ),
       ),
@@ -248,63 +287,66 @@ class MyPainter extends CustomPainter {
       Node fromNode = edge.from;
       Node toNode = edge.to;
 
-      var betweenBoxesX = (g.offset.dx - g.nodeSize.width) / 2;
-      var betweenBoxesY = (g.offset.dy - g.nodeSize.height) / 2;
+     
 
-      Offset betweenBoxesOffset = Offset(betweenBoxesX, betweenBoxesY);
-
+ 
           //  = (g.offset - g.nodeSize.height) / 2;
 
       var p = Path();
 
-      if (random < 50) {
-        // if flipped
-        if (1 == 2) {
-          // if (g.flipY) {
-          p = Path();
-          p.moveTo(fromNode.bottomCenter.dx, fromNode.bottomCenter.dy);
-          p.lineTo(fromNode.bottomCenter.dx,
-              fromNode.bottomCenter.dy - betweenBoxesOffset.dx);
-          p.lineTo(
-              toNode.topCenter.dx, fromNode.bottomCenter.dy - betweenBoxesOffset.dx);
-          p.lineTo(toNode.topCenter.dx, toNode.topCenter.dy);
-          canvas.drawPath(p, p2);
-        } else {
-          p.moveTo(fromNode.bottomCenter.dx, fromNode.bottomCenter.dy);
-          p.lineTo(fromNode.bottomCenter.dx,
-              fromNode.bottomCenter.dy + betweenBoxesOffset.dx);
-          p.lineTo(
-              toNode.topCenter.dx, fromNode.bottomCenter.dy + betweenBoxesOffset.dx);
-          p.lineTo(toNode.topCenter.dx, toNode.topCenter.dy);
-          canvas.drawPath(p, p2);
-        }
-      } else {
-        p.moveTo(fromNode.bottomCenter.dx, fromNode.bottomCenter.dy);
 
-        // Control point for the first curve
-        var cp1x = fromNode.bottomCenter.dx;
-        var cp1y = fromNode.bottomCenter.dy + betweenBoxesOffset.dx;
+      canvas.drawLine(fromNode.rightCenter, toNode.leftCenter, p2);
 
-        // Control point for the second curve
-        var cp2x = toNode.topCenter.dx;
-        var cp2y = fromNode.bottomCenter.dy + betweenBoxesOffset.dx;
 
-        // End point of the curve
-        var endx = toNode.topCenter.dx;
-        var endy = toNode.topCenter.dy;
 
-        // if flipy, change control points, instead ad adding, subtract
-        if (1 == 2) {
-          // if (g.flipY) {
-          cp1y = fromNode.bottomCenter.dy - betweenBoxesOffset.dx;
-          cp2y = fromNode.bottomCenter.dy - betweenBoxesOffset.dx;
-        }
+      // if (random < 50) {
+      //   // if flipped
+      //   if (1 == 2) {
+      //     // if (g.flipY) {
+      //     p = Path();
+      //     p.moveTo(fromNode.bottomCenter.dx, fromNode.bottomCenter.dy);
+      //     p.lineTo(fromNode.bottomCenter.dx,
+      //         fromNode.bottomCenter.dy - betweenBoxesOffset.dx);
+      //     p.lineTo(
+      //         toNode.topCenter.dx, fromNode.bottomCenter.dy - betweenBoxesOffset.dx);
+      //     p.lineTo(toNode.topCenter.dx, toNode.topCenter.dy);
+      //     canvas.drawPath(p, p2);
+      //   } else {
+      //     p.moveTo(fromNode.bottomCenter.dx, fromNode.bottomCenter.dy);
+      //     p.lineTo(fromNode.bottomCenter.dx,
+      //         fromNode.bottomCenter.dy + betweenBoxesOffset.dx);
+      //     p.lineTo(
+      //         toNode.topCenter.dx, fromNode.bottomCenter.dy + betweenBoxesOffset.dx);
+      //     p.lineTo(toNode.topCenter.dx, toNode.topCenter.dy);
+      //     canvas.drawPath(p, p2);
+      //   }
+      // } else {
+      //   p.moveTo(fromNode.bottomCenter.dx, fromNode.bottomCenter.dy);
 
-        // Draw cubic bezier curve
-        p.cubicTo(cp1x, cp1y, cp2x, cp2y, endx, endy);
+      //   // Control point for the first curve
+      //   var cp1x = fromNode.bottomCenter.dx;
+      //   var cp1y = fromNode.bottomCenter.dy + betweenBoxesOffset.dx;
 
-        canvas.drawPath(p, p2);
-      }
+      //   // Control point for the second curve
+      //   var cp2x = toNode.topCenter.dx;
+      //   var cp2y = fromNode.bottomCenter.dy + betweenBoxesOffset.dx;
+
+      //   // End point of the curve
+      //   var endx = toNode.topCenter.dx;
+      //   var endy = toNode.topCenter.dy;
+
+      //   // if flipy, change control points, instead ad adding, subtract
+      //   if (1 == 2) {
+      //     // if (g.flipY) {
+      //     cp1y = fromNode.bottomCenter.dy - betweenBoxesOffset.dx;
+      //     cp2y = fromNode.bottomCenter.dy - betweenBoxesOffset.dx;
+      //   }
+
+      //   // Draw cubic bezier curve
+      //   p.cubicTo(cp1x, cp1y, cp2x, cp2y, endx, endy);
+
+      //   canvas.drawPath(p, p2);
+      // }
 
       // }
     }

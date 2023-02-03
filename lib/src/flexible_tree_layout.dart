@@ -24,21 +24,18 @@ class FlexibleTreeLayout {
   // double _xOffSet = 75;
   Offset offset = (Offset.zero);
 
-  Size nodeSize;
   bool centerLayout;
-  bool flipAxis;
   // bool flipY;
 
   // bool vertical = false;
 
   FlexibleTreeLayout(
-      {required this.nodeSize,
+      {
       // required this.yOffSet,
       // required this.xOffSet,
       this.centerLayout = true,
       required this.offset,
       required this.nodes,
-      this.flipAxis = false,
       // this.flipY = false,
       // required this.vertical,
       required this.edges})
@@ -49,8 +46,8 @@ class FlexibleTreeLayout {
     _main();
   }
 
-// getter graphsize
-  Size get graphSize => Size(totalWidth, totalHeight);
+// // getter graphsize
+//   Size get graphSize => const Size(200, 200);
 
   void updateInsertOrder() {
     var i = 0;
@@ -109,30 +106,34 @@ class FlexibleTreeLayout {
 
   double get totalWidth {
     double totalWidth = 0;
+    double lastWidth = 0;
 
     for (var node in nodes) {
       if (node.x > totalWidth) {
         totalWidth = node.x;
+        lastWidth = node.size.width;
       }
     }
 
-    totalWidth += nodeSize.width;
+    return totalWidth + lastWidth;
 
-    return totalWidth;
-  }
+   }
 
   double get totalHeight {
     double totalHeight = 0;
+    double lastHeight = 0;
 
     for (var node in nodes) {
+      // totalHeight += offset.dy;
+
       if (node.y > totalHeight) {
         totalHeight = node.y;
+        lastHeight = node.size.height;
       }
     }
-
-    totalHeight += nodeSize.height;
-    return totalHeight;
-  }
+ 
+    return totalHeight + lastHeight;
+   }
 
   void _main() {
     // calculate
@@ -141,27 +142,33 @@ class FlexibleTreeLayout {
     // set x position modifier
     _setModx();
 
-    // iterate and print all modx, mody
     for (var node in nodes) {
-      print(
-          'node: ${node.name} depth: ${node.depth}     modx: ${node.modx} mody: ${node.mody}');
+      var newDepth = node.modx;
+      var newModx = node.depth;
+
+      node.depth = newDepth;
+      node.modx = newModx;
     }
 
-    if (flipAxis) {
-      // change depth with modx
-      for (var node in nodes) {
-        var newDepth = node.modx;
-        var newModx = node.depth;
+    // iterate and print all modx, mody
+    // for (var node in nodes) {
+    //   print(
+    //       'node: ${node.name} depth: ${node.depth}     modx: ${node.modx} mody: ${node.mody}');
+    // }
 
-        node.depth = newDepth;
-        node.modx = newModx;
-      }
-    }
+    // if (flipAxis) {
+    //   // change depth with modx
+    //   for (var node in nodes) {
+    //     var newDepth = node.modx;
+    //     var newModx = node.depth;
+
+    //     node.depth = newDepth;
+    //     node.modx = newModx;
+    //   }
+    // }
 
     // calculate coordinates
     _calculateCordinates();
-
-   
 
     // positionNodes(nodes, _maxDepth, totalWidth);
 
@@ -178,24 +185,6 @@ class FlexibleTreeLayout {
     }
     _maxDepth = maxDepth;
     return maxDepth;
-  }
-
-  void _calculateCordinatesFlipY() {
-    for (var node in nodes) {
-      node.y = totalHeight - node.y;
-    }
-
-    nodes[0].y += // height
-        nodeSize.height / 1;
-  }
-
-  void positionNodesFlippedAxis(
-
-      List<Node> nodes, int maxDepth, double totalWidth) {
-    if (centerLayout == false) return;
-
-    
-    
   }
 
   void positionNodes(List<Node> nodes, int maxDepth, double totalWidth) {
@@ -250,7 +239,6 @@ class FlexibleTreeLayout {
         }
       }
     }
- 
   }
 
   bool isCyclic() {
@@ -355,10 +343,25 @@ class FlexibleTreeLayout {
   }
 
   void _calculateCordinates() {
+    // sort nodes by depth
+    nodes.sort((a, b) => a.depth.compareTo(b.depth));
+
     for (var node in nodes) {
       // use nodeSide + offset
-      node.x = ((node.modx) * (nodeSize.width + offset.dx));
-      node.y = node.depth * (nodeSize.height + offset.dy);
+
+      double th = 0;
+      // reduce totalHeight from all nodes with depth < node.depth
+      nodes
+          .where((element) =>
+              (element.depth < node.depth) && (element.modx == node.modx))
+          .forEach((element) {
+        th += element.size.height;
+        // ignore: avoid_print
+        print("---  depth: ${element.depth} total height $totalHeight");
+      });
+
+      node.x = ((node.modx) * (node.size.width + offset.dx));
+      node.y = th + (node.depth * (offset.dy));
 
       // node.x = ((node.modx) * offset);
       // node.y = node.depth * offset;
@@ -367,45 +370,21 @@ class FlexibleTreeLayout {
 
   void _calculateEdgeBorderPoints() {
     for (var node in nodes) {
-      var centerRightx = node.x + nodeSize.width;
-      var centerRightY = node.y + nodeSize.height / 2;
+      var centerRightx = node.x + node.size.width;
+      var centerRightY = node.y + node.size.height / 2;
       node.rightCenter = Offset(centerRightx, centerRightY);
 
       var centerLeftx = node.x;
-      var centerLeftY = node.y + nodeSize.height / 2;
+      var centerLeftY = node.y + node.size.height / 2;
       node.leftCenter = Offset(centerLeftx, centerLeftY);
 
-      var centerTopx = node.x + nodeSize.width / 2;
+      var centerTopx = node.x + node.size.height / 2;
       var centerTopY = node.y;
       node.topCenter = Offset(centerTopx, centerTopY);
 
-      var centerBottomx = node.x + nodeSize.width / 2;
-      var centerBottomY = node.y + nodeSize.height;
+      var centerBottomx = node.x + node.size.width / 2;
+      var centerBottomY = node.y + node.size.height;
       node.bottomCenter = Offset(centerBottomx, centerBottomY);
-    }
-
-    // if (flipAxis) {
-    //   _rotateEdgeBorderPoints();
-    // }
-  }
-
-  // _rotateEdgeBorderPoints() {
-  //   for (var node in nodes) {
-  //     var tmp = node.topCenter;
-  //     node.topCenter = node.leftCenter;
-  //     node.leftCenter = node.bottomCenter;
-  //     node.bottomCenter = node.rightCenter;
-  //     node.rightCenter = tmp;
-  //   }
-  // }
-
-  // flipy Centerpoints
-  void _flipEdgeBorderPoints() {
-    // flip bottom and top
-    for (var node in nodes) {
-      var tmp = node.topCenter;
-      node.topCenter = node.bottomCenter;
-      node.bottomCenter = tmp;
     }
   }
 }

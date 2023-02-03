@@ -11,10 +11,11 @@ class Node {
   int depth = 0;
   int topology = 0;
   int insertorder = 0;
+  Size size;
 
   Offset rightCenter = Offset.zero;
   Offset leftCenter = Offset.zero;
-  Offset topCenter =  Offset.zero;
+  Offset topCenter = Offset.zero;
   Offset bottomCenter = Offset.zero;
 
   List<Node> parents = [];
@@ -25,11 +26,13 @@ class Node {
   final Map<String, dynamic>? configuration;
 
   /// use this constructor if you don't want to pass in a configuration.
-  Node(this.name) : configuration = null;
+  Node(this.name, {this.size = Size.zero}) : configuration = null;
 
   /// use this constructor if you have custom configuration. format of the configuration is Map<String, dynamic>
-  Node.config({required this.name, this.configuration = const {}});
-
+  Node.config(
+      {required this.name,
+      this.size = Size.zero,
+      this.configuration = const {}});
 
   // copywith with all
   Node copyWith({
@@ -38,11 +41,12 @@ class Node {
     int? mody,
     double? x,
     double? y,
-    List<Node>? parents,   
-    List<Node>? children,  
+    List<Node>? parents,
+    List<Node>? children,
     int? depth,
     int? topology,
     int? insertorder,
+    Size size = Size.zero,
     Offset? rightCenter,
     Offset? leftCenter,
     Offset? topCenter,
@@ -61,6 +65,7 @@ class Node {
       ..parents = parents ?? this.parents
       ..children = children ?? this.children
       ..depth = depth ?? this.depth
+      ..size = size
       ..topology = topology ?? this.topology
       ..insertorder = insertorder ?? this.insertorder
       ..rightCenter = rightCenter ?? this.rightCenter
@@ -69,8 +74,6 @@ class Node {
       ..bottomCenter = bottomCenter ?? this.bottomCenter
       ..childrenCount = childrenCount ?? this.childrenCount;
   }
- 
-
 
   @override
   String toString() {
