@@ -299,6 +299,23 @@ class FlexibleTreeLayout {
     path.removeLast();
   }
 
+  // find all paths that have a connection to the given node
+  List<List<Node>> findAllPathsToNode(Node node) {
+    List<List<Node>> paths = [];
+    for (var from in nodes) {
+      for (var to in nodes) {
+        if (from == to) continue;
+        List<List<Node>> allPaths = findAllPaths(from, to);
+        for (var path in allPaths) {
+          if (path.contains(node)) {
+            paths.add(path);
+          }
+        }
+      }
+    }
+    return paths;
+  }
+
   void _bfs() {
     for (var node in nodes) {
       node.depth = -1;
