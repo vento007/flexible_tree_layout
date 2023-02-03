@@ -41,24 +41,23 @@ class _GenerateRandomTreesState extends State<GenerateRandomTrees> {
 
       // random i between 5 and 15
       i = Random().nextInt(10) + 15;
- 
+
       // random double 100-150
 
       i++;
       List<Node> myNodes = List.generate(i, (index) {
-
         // randomDouble between 0 and 100
         var randomDouble = Random().nextDouble() * 100;
-            
 
         // random color
         ColorModel color = randomColor();
-        
-        return Node.config(name: (index + 1).toString(), 
-        size: Size(200, 100.0+randomDouble),
-        configuration: {
-          'color': color.color,
-        });
+
+        return Node.config(
+            name: (index + 1).toString(),
+            size: Size(200, 100.0 + randomDouble),
+            configuration: {
+              'color': color.color,
+            });
       });
 
       int flipYrandom = Random().nextInt(2);
@@ -87,7 +86,7 @@ class _GenerateRandomTreesState extends State<GenerateRandomTrees> {
       graph = FlexibleTreeLayout(
           // nodeSize:
           //     Size(120,60), // the size of each nodes
-          offset: Offset(50,50), // the offset between each level
+          offset: Offset(50, 50), // the offset between each level
           nodes: myNodes,
           // flipAxis: true,
           // vertical: false,
@@ -104,7 +103,7 @@ class _GenerateRandomTreesState extends State<GenerateRandomTrees> {
       Node destNode = graph!.nodes[graph!.nodes.length - 1];
       print("destnode is ${destNode.name}");
 
-      var findPath = graph!.findAllPaths(graph!.nodes[0], destNode);
+      var findPath = graph!.findAllPathsOld(graph!.nodes[0], destNode);
       for (var e in findPath) {
         print("path ${e.map((e) => e.name)}");
       }
@@ -126,13 +125,13 @@ class _GenerateRandomTreesState extends State<GenerateRandomTrees> {
 
     var externalRandom = Random().nextInt(100);
 
-    print ("total height ${graph!.totalHeight} total width ${graph!.totalWidth}");
+    print(
+        "total height ${graph!.totalHeight} total width ${graph!.totalWidth}");
 
     return Center(
       child: Container(
-        
         width: graph!.totalWidth,
-        height: graph!.totalHeight   ,
+        height: graph!.totalHeight,
 
         // decoration
         // rounded corners
@@ -141,12 +140,9 @@ class _GenerateRandomTreesState extends State<GenerateRandomTrees> {
         // color
         // padding
 
-      
-
-        
         child: Stack(
           children: [
-                 Positioned(
+            Positioned(
               // note: the position of the custom painter that draw the lines
               // needs to be the same as the box rendering of the nodes above
               // there are other ways to do this, but this is an easy way to get started
@@ -219,26 +215,26 @@ class _GenerateRandomTreesState extends State<GenerateRandomTrees> {
                   left: node.x,
                   top: node.y,
                   child: Container(
-
-  decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(10),
-          border: Border.all(color: Colors.grey),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.grey.withOpacity(0.5),
-              spreadRadius: 5,
-              blurRadius: 7,
-              offset: const Offset(0, 3), // changes position of shadow
-            ),
-          ],
-        ),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(color: Colors.grey),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.grey.withOpacity(0.5),
+                          spreadRadius: 5,
+                          blurRadius: 7,
+                          offset:
+                              const Offset(0, 3), // changes position of shadow
+                        ),
+                      ],
+                    ),
 
                     // decoration: BoxDecoration(
                     //   border: Border.all(color: Colors.black),
                     //   color: c,
                     // ),
-                    width:node.size.width,
+                    width: node.size.width,
                     height: node.size.height,
                     child: Builder(builder: (context) {
                       // random bool to decide if the text should be rendered or not
@@ -255,7 +251,6 @@ class _GenerateRandomTreesState extends State<GenerateRandomTrees> {
                 );
               });
             }).toList(),
-       
           ],
         ),
       ),
@@ -287,17 +282,11 @@ class MyPainter extends CustomPainter {
       Node fromNode = edge.from;
       Node toNode = edge.to;
 
-     
-
- 
-          //  = (g.offset - g.nodeSize.height) / 2;
+      //  = (g.offset - g.nodeSize.height) / 2;
 
       var p = Path();
 
-
       canvas.drawLine(fromNode.rightCenter, toNode.leftCenter, p2);
-
-
 
       // if (random < 50) {
       //   // if flipped

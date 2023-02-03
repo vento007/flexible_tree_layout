@@ -116,8 +116,7 @@ class FlexibleTreeLayout {
     }
 
     return totalWidth + lastWidth;
-
-   }
+  }
 
   double get totalHeight {
     double totalHeight = 0;
@@ -131,9 +130,9 @@ class FlexibleTreeLayout {
         lastHeight = node.size.height;
       }
     }
- 
+
     return totalHeight + lastHeight;
-   }
+  }
 
   void _main() {
     // calculate
@@ -242,7 +241,7 @@ class FlexibleTreeLayout {
   }
 
   bool isCyclic() {
-    Set<Node> visited = new Set<Node>();
+    Set<Node> visited = <Node>{};
     for (var node in nodes) {
       if (isCyclicHelper(node, visited)) {
         return true;
@@ -277,14 +276,14 @@ class FlexibleTreeLayout {
     return path;
   }
 
-  List<List<Node>> findAllPaths(Node from, Node to) {
+  List<List<Node>> findAllPathsOld(Node from, Node to) {
     List<List<Node>> paths = [];
     List<Node> path = [];
-    findAllPathsHelper(from, to, path, paths);
+    findAllPathsHelperOld(from, to, path, paths);
     return paths;
   }
 
-  void findAllPathsHelper(
+  void findAllPathsHelperOld(
       Node current, Node to, List<Node> path, List<List<Node>> paths) {
     if (current == to) {
       path.add(to);
@@ -294,32 +293,54 @@ class FlexibleTreeLayout {
     }
     path.add(current);
     for (Node child in current.children) {
-      findAllPathsHelper(child, to, path, paths);
+      findAllPathsHelperOld(child, to, path, paths);
     }
     path.removeLast();
   }
 
-  // find all paths that have a connection to the given node
-  List<List<Node>> findAllPathsToNode(Node node) {
-    // find all paths to root node
-    List<List<Node>> paths = [];
+
+List<List<Node>> findAllPaths(Node node) {
+  List<List<Node>> paths = [];
+  List<Node> currentPath = [];
+  findPathsHelper(node, paths, currentPath);
+  return paths;
+}
+
+void findPathsHelper(Node node, List<List<Node>> paths, List<Node> currentPath) {
+  currentPath.add(node);
+  if (!node.hasChildren) {
+    paths.add(List.from(currentPath));
+  } else {
     for (Node child in node.children) {
-      List<List<Node>> childPaths = findAllPaths(child, node);
-      paths.addAll(childPaths);
+      findPathsHelper(child, paths, currentPath);
     }
-
-    // iterate over all nodes that have dept == _maxdepth
-    // and find all paths to the given node
-    for (Node n in nodes) {
-      if (n.depth == _maxDepth) {
-        List<List<Node>> childPaths = findAllPaths(n, node);
-        paths.addAll(childPaths);
-      }
-    }
-
-    return paths;
-    
   }
+  currentPath.removeLast();
+}
+
+
+
+  // // find all paths that have a connection to the given node
+  // List<List<Node>> findAllPathsToNode(Node node) {
+  //   // find all paths to root node
+  //   List<List<Node>> paths = [];
+  //   for (Node child in node.children) {
+  //     List<List<Node>> childPaths = findAllPaths(child, node);
+  //     paths.addAll(childPaths);
+  //   }
+
+  //   // iterate over all nodes that have dept == _maxdepth
+  //   // and find all paths to the given node
+  //   for (Node n in nodes) {
+  //     if (n.depth == _maxDepth) {
+  //       List<List<Node>> childPaths = findAllPaths(n, node);
+  //       paths.addAll(childPaths);
+  //     }
+  //   }
+
+  //   return paths;
+
+  // }
 
   void _bfs() {
     for (var node in nodes) {

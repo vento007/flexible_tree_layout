@@ -75,6 +75,9 @@ class Node {
       ..childrenCount = childrenCount ?? this.childrenCount;
   }
 
+bool get hasChildren => children.isNotEmpty;
+
+
   @override
   String toString() {
     return 'Node{name: $name, configuration: $configuration} ';
