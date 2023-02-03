@@ -103,7 +103,7 @@ class _GenerateRandomTreesState extends State<GenerateRandomTrees> {
       Node destNode = graph!.nodes[graph!.nodes.length - 1];
       print("destnode is ${destNode.name}");
 
-      var findPath = graph!.findAllPathsOld(graph!.nodes[0], destNode);
+      var findPath = graph!.findAllPathsOneWay(graph!.nodes[0], destNode);
       for (var e in findPath) {
         print("path ${e.map((e) => e.name)}");
       }

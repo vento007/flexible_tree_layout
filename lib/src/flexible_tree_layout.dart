@@ -276,7 +276,7 @@ class FlexibleTreeLayout {
     return path;
   }
 
-  List<List<Node>> findAllPathsOld(Node from, Node to) {
+  List<List<Node>> findAllPathsOneWay(Node from, Node to) {
     List<List<Node>> paths = [];
     List<Node> path = [];
     findAllPathsHelperOld(from, to, path, paths);
@@ -298,27 +298,25 @@ class FlexibleTreeLayout {
     path.removeLast();
   }
 
-
-List<List<Node>> findAllPaths(Node node) {
-  List<List<Node>> paths = [];
-  List<Node> currentPath = [];
-  findPathsHelper(node, paths, currentPath);
-  return paths;
-}
-
-void findPathsHelper(Node node, List<List<Node>> paths, List<Node> currentPath) {
-  currentPath.add(node);
-  if (!node.hasChildren) {
-    paths.add(List.from(currentPath));
-  } else {
-    for (Node child in node.children) {
-      findPathsHelper(child, paths, currentPath);
-    }
+  List<List<Node>> findAllPaths(Node node) {
+    List<List<Node>> paths = [];
+    List<Node> currentPath = [];
+    findPathsHelper(node, paths, currentPath);
+    return paths;
   }
-  currentPath.removeLast();
-}
 
-
+  void findPathsHelper(
+      Node node, List<List<Node>> paths, List<Node> currentPath) {
+    currentPath.add(node);
+    if (!node.hasChildren) {
+      paths.add(List.from(currentPath));
+    } else {
+      for (Node child in node.children) {
+        findPathsHelper(child, paths, currentPath);
+      }
+    }
+    currentPath.removeLast();
+  }
 
   // // find all paths that have a connection to the given node
   // List<List<Node>> findAllPathsToNode(Node node) {

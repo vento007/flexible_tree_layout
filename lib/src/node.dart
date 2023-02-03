@@ -1,7 +1,7 @@
 import 'package:flutter/widgets.dart';
 
 /// Each node in the graph is represented by this class. use the default constructor if you don't want to pass any configuration, if you have need custom configuration, use the Node.config() constructor.
-class Node {
+class Node<T> {
   String name;
 
   int modx = 0;
@@ -12,6 +12,7 @@ class Node {
   int topology = 0;
   int insertorder = 0;
   Size size;
+  T? object;
 
   Offset rightCenter = Offset.zero;
   Offset leftCenter = Offset.zero;
@@ -32,6 +33,7 @@ class Node {
   Node.config(
       {required this.name,
       this.size = Size.zero,
+      this.object,
       this.configuration = const {}});
 
   // copywith with all
