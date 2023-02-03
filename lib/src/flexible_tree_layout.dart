@@ -301,19 +301,24 @@ class FlexibleTreeLayout {
 
   // find all paths that have a connection to the given node
   List<List<Node>> findAllPathsToNode(Node node) {
+    // find all paths to root node
     List<List<Node>> paths = [];
-    for (var from in nodes) {
-      for (var to in nodes) {
-        if (from == to) continue;
-        List<List<Node>> allPaths = findAllPaths(from, to);
-        for (var path in allPaths) {
-          if (path.contains(node)) {
-            paths.add(path);
-          }
-        }
+    for (Node child in node.children) {
+      List<List<Node>> childPaths = findAllPaths(child, node);
+      paths.addAll(childPaths);
+    }
+
+    // iterate over all nodes that have dept == _maxdepth
+    // and find all paths to the given node
+    for (Node n in nodes) {
+      if (n.depth == _maxDepth) {
+        List<List<Node>> childPaths = findAllPaths(n, node);
+        paths.addAll(childPaths);
       }
     }
+
     return paths;
+    
   }
 
   void _bfs() {
