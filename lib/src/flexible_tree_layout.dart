@@ -17,29 +17,15 @@ import 'package:flutter/widgets.dart';
 class FlexibleTreeLayout extends ChangeNotifier {
   List<Node> nodes = [];
   List<Edge> edges = [];
-  List<Node> collapsedNodes = [];
-  List<Edge> collapsedEdges = [];
-
   int _maxDepth = 0;
-
-  // double _yOffSet = 75;
-  // double _xOffSet = 75;
   Offset offset = (Offset.zero);
-
   bool centerLayout;
-  // bool flipY;
-
-  // bool vertical = false;
 
   FlexibleTreeLayout(
       {
-      // required this.yOffSet,
-      // required this.xOffSet,
       this.centerLayout = true,
       required this.offset,
       required this.nodes,
-      // this.flipY = false,
-      // required this.vertical,
       required this.edges})
       : assert(nodes.isNotEmpty,
             'Graph must have atleast one node, please add atleast one node'),
@@ -48,8 +34,6 @@ class FlexibleTreeLayout extends ChangeNotifier {
     _main();
   }
 
-// // getter graphsize
-//   Size get graphSize => const Size(200, 200);
 
   void updateInsertOrder() {
     var i = 0;
@@ -157,29 +141,8 @@ class FlexibleTreeLayout extends ChangeNotifier {
       node.modx = newModx;
     }
 
-    // iterate and print all modx, mody
-    // for (var node in nodes) {
-    //   print(
-    //       'node: ${node.name} depth: ${node.depth}     modx: ${node.modx} mody: ${node.mody}');
-    // }
 
-    // if (flipAxis) {
-    //   // change depth with modx
-    //   for (var node in nodes) {
-    //     var newDepth = node.modx;
-    //     var newModx = node.depth;
-
-    //     node.depth = newDepth;
-    //     node.modx = newModx;
-    //   }
-    // }
-
-    // calculate coordinates
     _calculateCordinates();
-
-    // positionNodes(nodes, _maxDepth, totalWidth);
-
-    // calculate edge border points
     _calculateEdgeBorderPoints();
   }
 
@@ -392,8 +355,6 @@ class FlexibleTreeLayout extends ChangeNotifier {
       node.x = ((node.modx) * (node.size.width + offset.dx));
       node.y = th + (node.depth * (offset.dy));
 
-      // node.x = ((node.modx) * offset);
-      // node.y = node.depth * offset;
     }
   }
 
