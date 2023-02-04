@@ -78,6 +78,7 @@ class Node<T> {
   }
 
 bool get hasChildren => children.isNotEmpty;
+bool get hasParents => parents.isNotEmpty;
 
 
   @override

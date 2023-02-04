@@ -55,6 +55,7 @@ class _GenerateRandomTreesState extends State<GenerateRandomTrees> {
         return Node.config(
             name: (index + 1).toString(),
             size: Size(200, 100.0 + randomDouble),
+            
             configuration: {
               'color': color.color,
             });
@@ -86,7 +87,7 @@ class _GenerateRandomTreesState extends State<GenerateRandomTrees> {
       graph = FlexibleTreeLayout(
           // nodeSize:
           //     Size(120,60), // the size of each nodes
-          offset: Offset(50, 50), // the offset between each level
+          offset: Offset( 50, 150), // the offset between each level
           nodes: myNodes,
           // flipAxis: true,
           // vertical: false,

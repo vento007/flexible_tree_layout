@@ -14,9 +14,11 @@ import 'package:flutter/widgets.dart';
 /// [_yOffSet] is the offset between each level.
 /// [nodeSize] is the size of each node.
 ///
-class FlexibleTreeLayout {
+class FlexibleTreeLayout extends ChangeNotifier {
   List<Node> nodes = [];
   List<Edge> edges = [];
+  List<Node> collapsedNodes = [];
+  List<Edge> collapsedEdges = [];
 
   int _maxDepth = 0;
 
@@ -129,7 +131,13 @@ class FlexibleTreeLayout {
         totalHeight = node.y;
         lastHeight = node.size.height;
       }
+      // add offset
+       totalHeight += offset.dy;
+
     }
+
+    // add offset
+    
 
     return totalHeight + lastHeight;
   }
@@ -318,27 +326,7 @@ class FlexibleTreeLayout {
     currentPath.removeLast();
   }
 
-  // // find all paths that have a connection to the given node
-  // List<List<Node>> findAllPathsToNode(Node node) {
-  //   // find all paths to root node
-  //   List<List<Node>> paths = [];
-  //   for (Node child in node.children) {
-  //     List<List<Node>> childPaths = findAllPaths(child, node);
-  //     paths.addAll(childPaths);
-  //   }
-
-  //   // iterate over all nodes that have dept == _maxdepth
-  //   // and find all paths to the given node
-  //   for (Node n in nodes) {
-  //     if (n.depth == _maxDepth) {
-  //       List<List<Node>> childPaths = findAllPaths(n, node);
-  //       paths.addAll(childPaths);
-  //     }
-  //   }
-
-  //   return paths;
-
-  // }
+  
 
   void _bfs() {
     for (var node in nodes) {
