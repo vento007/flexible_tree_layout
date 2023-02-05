@@ -54,7 +54,7 @@ class _GenerateRandomTreesState extends State<GenerateRandomTrees> {
 
         return Node.config(
             name: (index + 1).toString(),
-            size: Size(200, 100.0 + randomDouble),
+            size: Size(100, 30.0 + randomDouble),
             
             configuration: {
               'color': color.color,
@@ -87,7 +87,7 @@ class _GenerateRandomTreesState extends State<GenerateRandomTrees> {
       graph = FlexibleTreeLayout(
           // nodeSize:
           //     Size(120,60), // the size of each nodes
-          offset: Offset( 50, 150), // the offset between each level
+          offset: Offset( 70,50), // the offset between each level
           nodes: myNodes,
           // flipAxis: true,
           // vertical: false,
@@ -134,13 +134,7 @@ class _GenerateRandomTreesState extends State<GenerateRandomTrees> {
         width: graph!.totalWidth,
         height: graph!.totalHeight,
 
-        // decoration
-        // rounded corners
-        // border
-        // shadow
-        // color
-        // padding
-
+        
         child: Stack(
           children: [
             Positioned(
@@ -157,41 +151,7 @@ class _GenerateRandomTreesState extends State<GenerateRandomTrees> {
             // with positioned() and the x,y from the graph
             ...graph!.nodes.map((node) {
               return Builder(builder: (context) {
-                // checking if this specific node have a custom configuration and do
-                // some special case rendering.. in this case, it renders either a circle or
-                // the flutter logo
-
-                // generate random number between 0 and 1
-                // if 0, render circle
-                // if 1, render flutter logo
-
-                // if (externalRandom < 35) {
-                //   return Positioned(
-                //     left: node.x,
-                //     top: node.y,
-                //     child: SizedBox(
-                //       width: graph!.nodeSize.width,
-                //       height: graph!.nodeSize.height,
-                //       child: const Center(
-                //         child: RandomIcon(),
-                //       ),
-                //     ),
-                //   );
-                // }
-
-                // if (externalRandom > 35 && externalRandom < 70) {
-                //   return Positioned(
-                //     left: node.x,
-                //     top: node.y,
-                //     child: SizedBox(
-                //       width: graph!.nodeSize.width,
-                //       height: graph!.nodeSize.height,
-                //       child: const Center(
-                //         child: RandomNames(),
-                //       ),
-                //     ),
-                //   );
-                // }
+  
 
                 int random = Random().nextInt(105);
 
@@ -231,10 +191,7 @@ class _GenerateRandomTreesState extends State<GenerateRandomTrees> {
                       ],
                     ),
 
-                    // decoration: BoxDecoration(
-                    //   border: Border.all(color: Colors.black),
-                    //   color: c,
-                    // ),
+                  
                     width: node.size.width,
                     height: node.size.height,
                     child: Builder(builder: (context) {
@@ -287,58 +244,21 @@ class MyPainter extends CustomPainter {
 
       var p = Path();
 
-      canvas.drawLine(fromNode.rightCenter, toNode.leftCenter, p2);
+     // canvas.drawLine(fromNode.rightCenter, toNode.leftCenter, p2);
 
-      // if (random < 50) {
-      //   // if flipped
-      //   if (1 == 2) {
-      //     // if (g.flipY) {
-      //     p = Path();
-      //     p.moveTo(fromNode.bottomCenter.dx, fromNode.bottomCenter.dy);
-      //     p.lineTo(fromNode.bottomCenter.dx,
-      //         fromNode.bottomCenter.dy - betweenBoxesOffset.dx);
-      //     p.lineTo(
-      //         toNode.topCenter.dx, fromNode.bottomCenter.dy - betweenBoxesOffset.dx);
-      //     p.lineTo(toNode.topCenter.dx, toNode.topCenter.dy);
-      //     canvas.drawPath(p, p2);
-      //   } else {
-      //     p.moveTo(fromNode.bottomCenter.dx, fromNode.bottomCenter.dy);
-      //     p.lineTo(fromNode.bottomCenter.dx,
-      //         fromNode.bottomCenter.dy + betweenBoxesOffset.dx);
-      //     p.lineTo(
-      //         toNode.topCenter.dx, fromNode.bottomCenter.dy + betweenBoxesOffset.dx);
-      //     p.lineTo(toNode.topCenter.dx, toNode.topCenter.dy);
-      //     canvas.drawPath(p, p2);
-      //   }
-      // } else {
-      //   p.moveTo(fromNode.bottomCenter.dx, fromNode.bottomCenter.dy);
+      // cubic bezier curve
+       p.moveTo(fromNode.rightCenter.dx, fromNode.rightCenter.dy);
+       p.cubicTo(
+           fromNode.rightCenter.dx + random,
+           fromNode.rightCenter.dy,
+           toNode.leftCenter.dx - random,
+           toNode.leftCenter.dy,
+           toNode.leftCenter.dx,
+           toNode.leftCenter.dy);
+       canvas.drawPath(p, p2);
 
-      //   // Control point for the first curve
-      //   var cp1x = fromNode.bottomCenter.dx;
-      //   var cp1y = fromNode.bottomCenter.dy + betweenBoxesOffset.dx;
 
-      //   // Control point for the second curve
-      //   var cp2x = toNode.topCenter.dx;
-      //   var cp2y = fromNode.bottomCenter.dy + betweenBoxesOffset.dx;
-
-      //   // End point of the curve
-      //   var endx = toNode.topCenter.dx;
-      //   var endy = toNode.topCenter.dy;
-
-      //   // if flipy, change control points, instead ad adding, subtract
-      //   if (1 == 2) {
-      //     // if (g.flipY) {
-      //     cp1y = fromNode.bottomCenter.dy - betweenBoxesOffset.dx;
-      //     cp2y = fromNode.bottomCenter.dy - betweenBoxesOffset.dx;
-      //   }
-
-      //   // Draw cubic bezier curve
-      //   p.cubicTo(cp1x, cp1y, cp2x, cp2y, endx, endy);
-
-      //   canvas.drawPath(p, p2);
-      // }
-
-      // }
+ 
     }
   }
 
