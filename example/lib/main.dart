@@ -55,7 +55,7 @@ class _GenerateRandomTreesState extends State<GenerateRandomTrees> {
         return Node.config(
             name: (index + 1).toString(),
             size: Size(100, 30.0 + randomDouble),
-            
+
             configuration: {
               'color': color.color,
             });
@@ -87,30 +87,36 @@ class _GenerateRandomTreesState extends State<GenerateRandomTrees> {
       graph = FlexibleTreeLayout(
           // nodeSize:
           //     Size(120,60), // the size of each nodes
-          offset: Offset( 70,50), // the offset between each level
+          offset: Offset( 100,100), // the offset between each level
           nodes: myNodes,
           // flipAxis: true,
           // vertical: false,
-
+          orientation: ftlOrientation.vertical,
           centerLayout: true,
           edges: myEdges);
 
-      // debug
+   // debug
       for (var node in graph!.nodes) {
         print(
-            "name ${node.name} parent ${node.parents.map((e) => e.name)} children ${node.children.map((e) => e.name)}");
+            "name ${node.name} modx ${node.modx}  modxShift: ${node.modxShift}     mody ${node.mody} parent ${node.parents.map((e) => e.name)} children ${node.children.map((e) => e.name)}");
       }
 
-      Node destNode = graph!.nodes[graph!.nodes.length - 1];
-      print("destnode is ${destNode.name}");
+      // debug
+      // for (var node in graph!.nodes) {
+      //   print(
+      //       "name ${node.name} parent ${node.parents.map((e) => e.name)} children ${node.children.map((e) => e.name)}");
+      // }
 
-      var findPath = graph!.findAllPathsOneWay(graph!.nodes[0], destNode);
-      for (var e in findPath) {
-        print("path ${e.map((e) => e.name)}");
-      }
+      // Node destNode = graph!.nodes[graph!.nodes.length - 1];
+      // print("destnode is ${destNode.name}");
 
-      var isCyclic = graph!.isCyclic();
-      print("isCyclic $isCyclic");
+      // var findPath = graph!.findAllPathsOneWay(graph!.nodes[0], destNode);
+      // for (var e in findPath) {
+      //   print("path ${e.map((e) => e.name)}");
+      // }
+
+      // var isCyclic = graph!.isCyclic();
+      // print("isCyclic $isCyclic");
 
       // });
     });
@@ -126,15 +132,139 @@ class _GenerateRandomTreesState extends State<GenerateRandomTrees> {
 
     var externalRandom = Random().nextInt(100);
 
-    print(
-        "total height ${graph!.totalHeight} total width ${graph!.totalWidth}");
+  //   Node node1 = Node("1", size: Size(100, 90.0 + 0));
+  //   Node node2 = Node("pol", size: Size(100, 50.0  ));
+  //   Node node3 = Node("auth", size: Size(100, 50.0 ));
+  //   Node node4 = Node("access", size: Size(100, 50.0 ));
+   
+  //   Edge edge1 = Edge(node1, node2);
+  //   Edge edge2 = Edge(node1, node3);
+  //   Edge edge3 = Edge(node1, node4);
+ 
+  //   // node pol -> p1, p2, p3, p4, p5
+  //   // node auth -> u1, u2, u3, u4, u5
+  //   // node access -> a1, a2, a3, a4, a5
+
+  //   Node pol1 = Node("p1", size: Size(100, 50.0 + 0));
+  //   Node pol2 = Node("p2", size: Size(100, 50.0 + 0));
+  //   Node pol3 = Node("p3", size: Size(100, 50.0 + 0));
+  //   Node pol4 = Node("p4", size: Size(100, 50.0 + 0));
+  //   Node pol5 = Node("p5", size: Size(100, 50.0 + 0));
+  //   Node pol6 = Node("p6", size: Size(100, 50.0 + 0));
+
+  //   Edge polToPol1 = Edge(node2, pol1);
+  //   Edge polToPol2 = Edge(node2, pol2);
+  //   Edge polToPol3 = Edge(node2, pol3);
+  //   Edge polToPol4 = Edge(node2, pol4);
+  //   Edge polToPol5 = Edge(node2, pol5);
+  //   Edge polToPol6 = Edge(node2, pol6);
+
+
+  //  Node aol1 = Node("a1", size: Size(100, 50.0 + 0));
+  //   Node aol2 = Node("a2", size: Size(100, 50.0 + 0));
+  //   Node aol3 = Node("a3", size: Size(100, 50.0 + 0));
+  //   Node aol4 = Node("a4", size: Size(100, 50.0 + 0));
+  //   Node aol5 = Node("a5", size: Size(100, 50.0 + 0));
+  //   Node aol6 = Node("a6", size: Size(100, 50.0 + 0));
+
+  //   Edge aolToPol1 = Edge(node3, aol1);
+  //   Edge aolToPol2 = Edge(node3, aol2);
+  //   Edge aolToPol3 = Edge(node3, aol3);
+  //   Edge aolToPol4 = Edge(node3, aol4);
+  //   Edge aolToPol5 = Edge(node3, aol5);
+  //   Edge aolToPol6 = Edge(node3, aol6);
+
+  //      Node uol1 = Node("a1", size: Size(100, 50.0 + 0));
+  //   Node uol2 = Node("a2", size: Size(100, 50.0 + 0));
+  //   Node uol3 = Node("a3", size: Size(100, 50.0 + 0));
+  //   Node uol4 = Node("a4", size: Size(100, 50.0 + 0));
+  //   Node uol5 = Node("a5", size: Size(100, 50.0 + 0));
+  //   Node uol6 = Node("a6", size: Size(100, 50.0 + 0));
+
+  //   Edge uolToPol1 = Edge(node4, uol1);
+  //   Edge uolToPol2 = Edge(node4, uol2);
+  //   Edge uolToPol3 = Edge(node4, uol3);
+  //   Edge uolToPol4 = Edge(node4, uol4);
+  //   Edge uolToPol5 = Edge(node4, uol5);
+  //   Edge uolToPol6 = Edge(node4, uol6);
+ 
+
+  //   List<Node> myNodes = [
+
+  //     node1,
+  //     node2,
+  //     node3,
+  //     node4,
+  //     pol1,
+  //     pol2,
+  //     pol3,
+  //     pol4,
+  //     pol5,
+  //     pol6,
+  //     aol1,
+  //     aol2,
+  //     aol3,
+  //     aol4,
+  //     aol5,
+  //     aol6,
+  //     uol1,
+  //     uol2,
+  //     uol3,
+  //     uol4,
+  //     uol5,
+  //     uol6,
+
+    
+  //   ];
+  //   List<Edge> myEdges = [
+  //     edge1,
+  //     edge2,
+  //     edge3,
+  //     polToPol1,
+  //     polToPol2,
+  //     polToPol3,
+  //     polToPol4,
+  //     polToPol5,
+  //     polToPol6,
+  //     aolToPol1,
+  //     aolToPol2,
+  //     aolToPol3,
+  //     aolToPol4,
+  //     aolToPol5,
+  //     aolToPol6,
+  //     uolToPol1,
+  //     uolToPol2,
+  //     uolToPol3,
+  //     uolToPol4,
+  //     uolToPol5,
+  //     uolToPol6,
+    
+  //   ];
+
+   
+
+  //   graph = FlexibleTreeLayout(
+  //     // nodeSize:
+  //     //     Size(120,60), // the size of each nodes
+  //     offset: const Offset(70, 30), // the offset between each level
+  //     nodes: myNodes,
+
+  //     // flipAxis: true,
+  //     // vertical: false,
+
+  //     centerLayout: true,
+  //     orientation: ftlOrientation.vertical,
+  //     edges: myEdges,
+  //   );
+
+    // print(
+    //     "total height ${graph!.totalHeight} total width ${graph!.totalWidth}");
 
     return Center(
       child: Container(
         width: graph!.totalWidth,
         height: graph!.totalHeight,
-
-        
+        color: Colors.transparent,
         child: Stack(
           children: [
             Positioned(
@@ -151,27 +281,6 @@ class _GenerateRandomTreesState extends State<GenerateRandomTrees> {
             // with positioned() and the x,y from the graph
             ...graph!.nodes.map((node) {
               return Builder(builder: (context) {
-  
-
-                int random = Random().nextInt(105);
-
-                List<Color> colors = [
-                  const Color(0xff227c9d),
-                  const Color(0xff17c3b2),
-                  const Color(0xffffcb77),
-                  const Color(0xfff36d73),
-                  const Color(0xff264653),
-                  const Color(0xff264653),
-                  const Color(0xff264653),
-                  const Color(0xff264653),
-                  Colors.black,
-                  Colors.white,
-                  Colors.white,
-                ];
-
-                int rl = Random().nextInt(colors.length);
-                Color c = colors[rl];
-
                 return Positioned(
                   left: node.x,
                   top: node.y,
@@ -190,8 +299,6 @@ class _GenerateRandomTreesState extends State<GenerateRandomTrees> {
                         ),
                       ],
                     ),
-
-                  
                     width: node.size.width,
                     height: node.size.height,
                     child: Builder(builder: (context) {
@@ -244,21 +351,18 @@ class MyPainter extends CustomPainter {
 
       var p = Path();
 
-     // canvas.drawLine(fromNode.rightCenter, toNode.leftCenter, p2);
+        canvas.drawLine(fromNode.bottomCenter, toNode.topCenter, p2);
 
       // cubic bezier curve
-       p.moveTo(fromNode.rightCenter.dx, fromNode.rightCenter.dy);
-       p.cubicTo(
-           fromNode.rightCenter.dx + random,
-           fromNode.rightCenter.dy,
-           toNode.leftCenter.dx - random,
-           toNode.leftCenter.dy,
-           toNode.leftCenter.dx,
-           toNode.leftCenter.dy);
-       canvas.drawPath(p, p2);
-
-
- 
+      // p.moveTo(fromNode.bottomCenter.dx, fromNode.bottomCenter.dy);
+      // p.cubicTo(
+      //     fromNode.bottomCenter.dx ,
+      //     fromNode.bottomCenter.dy,
+      //     toNode.topCenter.dx,
+      //     toNode.topCenter.dy,
+      //     toNode.topCenter.dx,
+      //     toNode.topCenter.dy);
+      // canvas.drawPath(p, p2);
     }
   }
 

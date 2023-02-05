@@ -8,11 +8,14 @@ class Node<T> {
   int mody = 0;
   double x = 0;
   double y = 0;
+  
   int depth = 0;
   int topology = 0;
   int insertorder = 0;
   Size size;
   T? object;
+    int modxShift;
+
 
   Offset rightCenter = Offset.zero;
   Offset leftCenter = Offset.zero;
@@ -27,11 +30,12 @@ class Node<T> {
   final Map<String, dynamic>? configuration;
 
   /// use this constructor if you don't want to pass in a configuration.
-  Node(this.name, {this.size = Size.zero}) : configuration = null;
+  Node(this.name, {this.size = Size.zero, this.modxShift = 0}) : configuration = null;
 
   /// use this constructor if you have custom configuration. format of the configuration is Map<String, dynamic>
   Node.config(
       {required this.name,
+      this.modxShift = 0,
       this.size = Size.zero,
       this.object,
       this.configuration = const {}});
