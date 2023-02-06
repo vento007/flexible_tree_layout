@@ -162,6 +162,15 @@ class FlexibleTreeLayout extends ChangeNotifier {
   }
 
   void _main() {
+
+    if (nodes.isEmpty) {
+      return;
+    }
+
+    if (edges.isEmpty) {
+      return;
+    }
+
     _bfs();
 
     // set x position modifier
