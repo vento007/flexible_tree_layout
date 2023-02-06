@@ -187,6 +187,12 @@ class FlexibleTreeLayout extends ChangeNotifier {
     _calculateEdgeBorderPoints();
   }
 
+  void reCalculate() {
+    _main();
+    notifyListeners();
+  }
+
+
   int findMaxDepth() {
     int maxDepth = 0;
     for (var node in nodes) {
