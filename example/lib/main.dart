@@ -1,11 +1,8 @@
-import 'dart:async';
 import 'dart:math';
 
 import 'package:flexible_tree_layout/flexible_tree_layout.dart';
 import 'package:flutter/material.dart';
 import './helpers/random_color.dart';
-import './helpers/randomicon.dart';
-import './helpers/randomname.dart';
 
 void main() {
   runApp(const Loader());
@@ -329,7 +326,7 @@ class MyPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     bool r = Random().nextBool();
-      int lineRandom = Random().nextInt(44);
+    int lineRandom = Random().nextInt(44);
 
     for (var edge in g.edges) {
       // random double between 1-3
@@ -345,56 +342,38 @@ class MyPainter extends CustomPainter {
       Node fromNode = edge.from;
       Node toNode = edge.to;
       if (lineRandom >= 30) {
-
-  Path path = Path();
-      path.moveTo(fromNode.bottomCenter.dx + 0, fromNode.bottomCenter.dy);
-      path.cubicTo(
-          fromNode.bottomCenter.dx,
-          fromNode.bottomCenter.dy + 100,
-          toNode.topCenter.dx,
-          toNode.topCenter.dy - 100,
-          toNode.topCenter.dx,
-          toNode.topCenter.dy);
-      canvas.drawPath(path, p2);
-
-
-      }
-    
-
-    if (lineRandom >= 5 && lineRandom < 30) {
-
- 
-      // 1. find diff between both nodes
-      double diffX = toNode.topCenter.dx - fromNode.bottomCenter.dx;
-      double diffY = toNode.topCenter.dy - fromNode.bottomCenter.dy;
-
-      // draw line to the middle of the node
-
-      var p = Path();
-      p.moveTo(fromNode.bottomCenter.dx, fromNode.bottomCenter.dy);
-      p.lineTo(fromNode.bottomCenter.dx ,
-          fromNode.bottomCenter.dy + diffY / 2);
-
-
- p.lineTo(toNode.topCenter.dx,
-          toNode.topCenter.dy - diffY / 2);
-
-      p.lineTo(toNode.topCenter.dx, toNode.topCenter.dy);
-
-
-      canvas.drawPath(p, p2);
-
-      // draw line from the middle of the node to the other node
-
-
-      
-    
-
-       
+        Path path = Path();
+        path.moveTo(fromNode.bottomCenter.dx + 0, fromNode.bottomCenter.dy);
+        path.cubicTo(
+            fromNode.bottomCenter.dx,
+            fromNode.bottomCenter.dy + 100,
+            toNode.topCenter.dx,
+            toNode.topCenter.dy - 100,
+            toNode.topCenter.dx,
+            toNode.topCenter.dy);
+        canvas.drawPath(path, p2);
       }
 
+      if (lineRandom >= 5 && lineRandom < 30) {
+        // 1. find diff between both nodes
+        double diffX = toNode.topCenter.dx - fromNode.bottomCenter.dx;
+        double diffY = toNode.topCenter.dy - fromNode.bottomCenter.dy;
 
+        // draw line to the middle of the node
 
+        var p = Path();
+        p.moveTo(fromNode.bottomCenter.dx, fromNode.bottomCenter.dy);
+        p.lineTo(
+            fromNode.bottomCenter.dx, fromNode.bottomCenter.dy + diffY / 2);
+
+        p.lineTo(toNode.topCenter.dx, toNode.topCenter.dy - diffY / 2);
+
+        p.lineTo(toNode.topCenter.dx, toNode.topCenter.dy);
+
+        canvas.drawPath(p, p2);
+
+        // draw line from the middle of the node to the other node
+      }
 
       if (lineRandom < 5) {
         double distance = 80;

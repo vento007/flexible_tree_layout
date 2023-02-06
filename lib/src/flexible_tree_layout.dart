@@ -21,16 +21,25 @@ class FlexibleTreeLayout extends ChangeNotifier {
   bool centerLayout;
   ftlOrientation orientation;
 
+  // FlexibleTreeLayout(
+  //     {this.centerLayout = true,
+  //     this.orientation = ftlOrientation.vertical,
+  //     required this.offset,
+  //     required this.nodes,
+  //     required this.edges})
+  //     : assert(nodes.isNotEmpty,
+  //           'Graph must have atleast one node, please add atleast one node'),
+  //       assert(edges.isNotEmpty,
+  //           'Graph must have atleast one edge, please add atleast one edge') {
+  //   _main();
+  // }
+
   FlexibleTreeLayout(
       {this.centerLayout = true,
       this.orientation = ftlOrientation.vertical,
       required this.offset,
       required this.nodes,
-      required this.edges})
-      : assert(nodes.isNotEmpty,
-            'Graph must have atleast one node, please add atleast one node'),
-        assert(edges.isNotEmpty,
-            'Graph must have atleast one edge, please add atleast one edge') {
+      required this.edges}) {
     _main();
   }
 
@@ -109,12 +118,12 @@ class FlexibleTreeLayout extends ChangeNotifier {
 
     // for (var node in nodes) {
     //   if (node.y > totalHeight) {
-       
+
     //     totalHeight = node.y;
     //     lastHeight = node.size.height;
-         
+
     //   }
-      // add last
+    // add last
     // }
 
     // add offset
@@ -124,37 +133,32 @@ class FlexibleTreeLayout extends ChangeNotifier {
     double totalHeight = 0;
     double lastHeight = 0;
 
-  for (int depth = 0; depth <= _maxDepth; depth++) {
-        // filter out nodes that don't have the desired depth
+    for (int depth = 0; depth <= _maxDepth; depth++) {
+      // filter out nodes that don't have the desired depth
 
-        List<Node> nodesAtDepth =
-            nodes.where((node) => node.mody == depth).toList(growable: false);
+      List<Node> nodesAtDepth =
+          nodes.where((node) => node.mody == depth).toList(growable: false);
 
-        var thisRowHeight = 0.0;
-        var lastHeights = 0.0;
-        for (var node in nodesAtDepth) {
-          if (node.y > thisRowHeight) {
-            thisRowHeight = node.y;
-          }
-          lastHeights = node.size.height;
-          // if last
-          if (node == nodesAtDepth.last) {
-            thisRowHeight += lastHeights;
-
-           
-          }
+      var thisRowHeight = 0.0;
+      var lastHeights = 0.0;
+      for (var node in nodesAtDepth) {
+        if (node.y > thisRowHeight) {
+          thisRowHeight = node.y;
         }
-
-        if (thisRowHeight > totalHeight) {
-          totalHeight = thisRowHeight;
+        lastHeights = node.size.height;
+        // if last
+        if (node == nodesAtDepth.last) {
+          thisRowHeight += lastHeights;
         }
       }
- 
+
+      if (thisRowHeight > totalHeight) {
+        totalHeight = thisRowHeight;
+      }
+    }
+
     // TODO fix total height calculation, sometimes a few pixels are missing
     return totalHeight + offset.dy;
-
-
-
   }
 
   void _main() {
