@@ -188,7 +188,12 @@ class FlexibleTreeLayout extends ChangeNotifier {
   }
 
   void reCalculate() {
-    _main();
+    _bfs();
+
+     _setModx();
+
+    _calculateCordinates();
+    _calculateEdgeBorderPoints();
     notifyListeners();
   }
 
