@@ -71,7 +71,7 @@ class Node<T> {
       ..parents = parents ?? this.parents
       ..children = children ?? this.children
       ..depth = depth ?? this.depth
-      ..size = size
+      ..size =   this.size
       ..topology = topology ?? this.topology
       ..insertorder = insertorder ?? this.insertorder
       ..rightCenter = rightCenter ?? this.rightCenter
