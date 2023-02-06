@@ -234,19 +234,19 @@ class _GenerateRandomTreesState extends State<GenerateRandomTrees> {
 
     //   ];
 
-    //   graph = FlexibleTreeLayout(
-    //     // nodeSize:
-    //     //     Size(120,60), // the size of each nodes
-    //     offset: const Offset(70, 30), // the offset between each level
-    //     nodes: myNodes,
+      // graph = FlexibleTreeLayout(
+      //   // nodeSize:
+      //   //     Size(120,60), // the size of each nodes
+      //   offset: const Offset(70, 30), // the offset between each level
+      //   nodes: myNodes,
 
-    //     // flipAxis: true,
-    //     // vertical: false,
+      //   // flipAxis: true,
+      //   // vertical: false,
 
-    //     centerLayout: true,
-    //     orientation: ftlOrientation.vertical,
-    //     edges: myEdges,
-    //   );
+      //   centerLayout: true,
+      //   orientation: ftlOrientation.vertical,
+      //   edges: myEdges,
+      // );
 
     // print(
     //     "total height ${graph!.totalHeight} total width ${graph!.totalWidth}");

@@ -41,6 +41,48 @@ class Node<T> {
       this.configuration = const {}});
 
   // copywith with all
+  // Node copyWith({
+  //   String? name,
+  //   int? modx,
+  //   int? mody,
+  //   double? x,
+  //   double? y,
+  //   List<Node>? parents,
+  //   List<Node>? children,
+  //   int? depth,
+  //   int? topology,
+  //   int? insertorder,
+  //   Size size = Size.zero,
+  //   Offset? rightCenter,
+  //   Offset? leftCenter,
+  //   Offset? topCenter,
+  //   Offset? bottomCenter,
+  //   int? childrenCount,
+  //   Map<String, dynamic>? configuration,
+  // }) {
+  //   return Node.config(
+  //     name: name ?? this.name,
+  //     configuration: configuration ?? this.configuration,
+  //   )
+  //     ..modx = modx ?? this.modx
+  //     ..mody = mody ?? this.mody
+  //     ..x = x ?? this.x
+  //     ..y = y ?? this.y
+  //     ..parents = parents ?? this.parents
+  //     ..children = children ?? this.children
+  //     ..depth = depth ?? this.depth
+  //     ..size =   this.size
+  //     ..topology = topology ?? this.topology
+  //     ..insertorder = insertorder ?? this.insertorder
+  //     ..rightCenter = rightCenter ?? this.rightCenter
+  //     ..leftCenter = leftCenter ?? this.leftCenter
+  //     ..topCenter = topCenter ?? this.topCenter
+  //     ..bottomCenter = bottomCenter ?? this.bottomCenter
+  //     ..childrenCount = childrenCount ?? this.childrenCount;
+  // }
+
+  // copy with all
+
   Node copyWith({
     String? name,
     int? modx,
@@ -52,7 +94,7 @@ class Node<T> {
     int? depth,
     int? topology,
     int? insertorder,
-    Size size = Size.zero,
+    Size? size,
     Offset? rightCenter,
     Offset? leftCenter,
     Offset? topCenter,
@@ -71,7 +113,7 @@ class Node<T> {
       ..parents = parents ?? this.parents
       ..children = children ?? this.children
       ..depth = depth ?? this.depth
-      ..size =   this.size
+      ..size = size ?? this.size
       ..topology = topology ?? this.topology
       ..insertorder = insertorder ?? this.insertorder
       ..rightCenter = rightCenter ?? this.rightCenter

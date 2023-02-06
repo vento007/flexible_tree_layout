@@ -188,6 +188,7 @@ class FlexibleTreeLayout extends ChangeNotifier {
   }
 
   void reCalculate() {
+    updateInsertOrder();
     _bfs();
 
      _setModx();
