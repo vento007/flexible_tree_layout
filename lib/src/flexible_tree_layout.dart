@@ -16,24 +16,15 @@ import 'package:flutter/widgets.dart';
 class FlexibleTreeLayout extends ChangeNotifier {
   List<Node> nodes = [];
   List<Edge> edges = [];
+
+  List<Node> nodesReset = [];
+  List<Edge> edgesReset = [];
+
   int _maxDepth = 0;
   Offset offset = (Offset.zero);
   bool centerLayout;
   ftlOrientation orientation;
   List<List<Node>> predefinedPaths = [];
-
-  // FlexibleTreeLayout(
-  //     {this.centerLayout = true,
-  //     this.orientation = ftlOrientation.vertical,
-  //     required this.offset,
-  //     required this.nodes,
-  //     required this.edges})
-  //     : assert(nodes.isNotEmpty,
-  //           'Graph must have atleast one node, please add atleast one node'),
-  //       assert(edges.isNotEmpty,
-  //           'Graph must have atleast one edge, please add atleast one edge') {
-  //   _main();
-  // }
 
   FlexibleTreeLayout(
       {this.centerLayout = true,
@@ -47,7 +38,6 @@ class FlexibleTreeLayout extends ChangeNotifier {
 
   void updateInsertOrder() {
     var i = 0;
-
     for (Node n in nodes) {
       n.insertorder = i;
       i++;
@@ -100,13 +90,11 @@ class FlexibleTreeLayout extends ChangeNotifier {
         lastWidth = node.size.width;
       }
     }
-
     return totalWidth + lastWidth;
   }
 
   double get totalHeight {
     double totalHeight = 0;
-    double lastHeight = 0;
 
     for (int depth = 0; depth <= _maxDepth; depth++) {
       // filter out nodes that don't have the desired depth
@@ -132,32 +120,14 @@ class FlexibleTreeLayout extends ChangeNotifier {
       }
     }
 
-    // TODO fix total height calculation, sometimes a few pixels are missing
     return totalHeight + offset.dy;
   }
 
   void _main() {
-    if (nodes.isEmpty) {
+    if (nodes.isEmpty || edges.isEmpty) {
       return;
     }
-
-    if (edges.isEmpty) {
-      return;
-    }
-
- 
     calculate();
-
-    // updateInsertOrder();
-    // _bfs();
-    // _setModx();
-
-    // _calculateCordinates();
-    // _calculateEdgeBorderPoints();
-
- 
-
-   
   }
 
   void calculate() {
@@ -186,46 +156,84 @@ class FlexibleTreeLayout extends ChangeNotifier {
     return maxDepth;
   }
 
-  void positionNodes(List<Node> nodes, int maxDepth, double totalWidth) {
-    if (centerLayout == false) return;
+  void filter(List<List<Node>> paths) {
+    // copy to reset
+    nodesReset = nodes;
+    edgesReset = edges;
 
-    for (int depth = 0; depth <= maxDepth; depth++) {
-      // filter out nodes that don't have the desired depth
-      List<Node> filteredNodes =
-          nodes.where((node) => node.depth == depth).toList();
+    // tmp list
 
-      int nodeCount = filteredNodes.length;
-      double nodeWidth = totalWidth / (nodeCount + 1);
+    List<Node> nodesTmp = [];
+    List<Edge> edgesTmp = [];
 
-      for (int i = 0; i < nodeCount; i++) {
-        filteredNodes[i].x = (i + 1) * nodeWidth;
+    for (List<Node> path in paths) {
+      for (Node node in path) {
+        if (nodeExist(node) && !nodesTmp.contains(node)) {
+          nodesTmp.add(node);
+        }
+      }
+      for (Edge edge in edges) {
+        if (nodeExist(edge.from) && nodeExist(edge.to)) {
+          edgesTmp.add(edge);
+        }
       }
     }
-
-    // shift everything left so that the leftmost node is at x = 0
-    double minX = double.infinity;
-    for (var node in nodes) {
-      if (node.x < minX) {
-        minX = node.x;
-      }
-    }
-
-    for (var node in nodes) {
-      node.x -= minX;
-    }
-
-    // shift everything so the topmost node is at y = 0
-    double minY = double.infinity;
-    for (var node in nodes) {
-      if (node.y < minY) {
-        minY = node.y;
-      }
-    }
-
-    for (var node in nodes) {
-      node.y -= minY;
-    }
+ 
+    nodes = nodesTmp;
+    edges = edgesTmp;
+    updateInsertOrder();
+    calculate();
+     
+    notifyListeners();
   }
+
+  void resetFilter() {
+    nodes = nodesReset;
+    edges = edgesReset;
+    calculate();
+    notifyListeners();
+  }
+
+  // void positionNodes(List<Node> nodes, int maxDepth, double totalWidth) {
+  //   if (centerLayout == false) return;
+
+  //   for (int depth = 0; depth <= maxDepth; depth++) {
+  //     // filter out nodes that don't have the desired depth
+  //     List<Node> filteredNodes =
+  //         nodes.where((node) => node.depth == depth).toList();
+
+  //     int nodeCount = filteredNodes.length;
+  //     double nodeWidth = totalWidth / (nodeCount + 1);
+
+  //     for (int i = 0; i < nodeCount; i++) {
+  //       filteredNodes[i].x = (i + 1) * nodeWidth;
+  //     }
+  //   }
+
+  //   // shift everything left so that the leftmost node is at x = 0
+  //   double minX = double.infinity;
+  //   for (var node in nodes) {
+  //     if (node.x < minX) {
+  //       minX = node.x;
+  //     }
+  //   }
+
+  //   for (var node in nodes) {
+  //     node.x -= minX;
+  //   }
+
+  //   // shift everything so the topmost node is at y = 0
+  //   double minY = double.infinity;
+  //   for (var node in nodes) {
+  //     if (node.y < minY) {
+  //       minY = node.y;
+  //     }
+  //   }
+
+  //   for (var node in nodes) {
+  //     node.y -= minY;
+  //   }
+  // }
 
   void _setModx() {
     for (var depth = 0; depth <= _maxDepth; depth++) {
@@ -247,29 +255,6 @@ class FlexibleTreeLayout extends ChangeNotifier {
     }
   }
 
-  bool isCyclic() {
-    Set<Node> visited = <Node>{};
-    for (var node in nodes) {
-      if (isCyclicHelper(node, visited)) {
-        return true;
-      }
-    }
-    return false;
-  }
-
-  bool isCyclicHelper(Node current, Set<Node> visited) {
-    if (visited.contains(current)) {
-      return true;
-    }
-    visited.add(current);
-    for (Node child in current.children) {
-      if (isCyclicHelper(child, visited)) {
-        return true;
-      }
-    }
-    return false;
-  }
-
 // find path between two nodes
   List<Node> findPath(Node from, Node to) {
     List<Node> path = [];
@@ -286,11 +271,11 @@ class FlexibleTreeLayout extends ChangeNotifier {
   List<List<Node>> findAllPathsOneWay(Node from, Node to) {
     List<List<Node>> paths = [];
     List<Node> path = [];
-    findAllPathsHelperOld(from, to, path, paths);
+    findAllPathsHelper(from, to, path, paths);
     return paths;
   }
 
-  void findAllPathsHelperOld(
+  void findAllPathsHelper(
       Node current, Node to, List<Node> path, List<List<Node>> paths) {
     if (current == to) {
       path.add(to);
@@ -300,52 +285,30 @@ class FlexibleTreeLayout extends ChangeNotifier {
     }
     path.add(current);
     for (Node child in current.children) {
-      findAllPathsHelperOld(child, to, path, paths);
+      findAllPathsHelper(child, to, path, paths);
     }
     path.removeLast();
   }
 
-  List<List<Node>> findAllPaths(Node node) {
-    List<List<Node>> paths = [];
-    List<Node> currentPath = [];
-    findPathsHelper(node, paths, currentPath);
-    return paths;
-  }
+  // List<List<Node>> findAllPaths(Node node) {
+  //   List<List<Node>> paths = [];
+  //   List<Node> currentPath = [];
+  //   findPathsHelper(node, paths, currentPath);
+  //   return paths;
+  // }
 
-  void findPathsHelper(
-      Node node, List<List<Node>> paths, List<Node> currentPath) {
-    currentPath.add(node);
-    if (!node.hasChildren) {
-      paths.add(List.from(currentPath));
-    } else {
-      for (Node child in node.children) {
-        findPathsHelper(child, paths, currentPath);
-      }
-    }
-    currentPath.removeLast();
-  }
-
-  void shiftDepths(int modx) {
-    int maxDepth = findMaxDepth();
-    Map<int, List<Node>> nodesByDepth = {};
-
-    for (var node in nodes) {
-      if (!nodesByDepth.containsKey(node.depth)) {
-        nodesByDepth[node.depth] = [node];
-      } else {
-        nodesByDepth[node.depth]!.add(node);
-      }
-    }
-
-    for (var i = 0; i <= maxDepth; i++) {
-      List<Node> nodesAtDepth = nodesByDepth[i]!;
-      int modxShift = (nodesAtDepth.length / modx).ceil();
-      for (var j = 0; j < nodesAtDepth.length; j++) {
-        Node node = nodesAtDepth[j];
-        node.depth += (j / modx).ceil() * modxShift;
-      }
-    }
-  }
+  // void findPathsHelper(
+  //     Node node, List<List<Node>> paths, List<Node> currentPath) {
+  //   currentPath.add(node);
+  //   if (!node.hasChildren) {
+  //     paths.add(List.from(currentPath));
+  //   } else {
+  //     for (Node child in node.children) {
+  //       findPathsHelper(child, paths, currentPath);
+  //     }
+  //   }
+  //   currentPath.removeLast();
+  // }
 
   void _bfs() {
     for (var node in nodes) {
@@ -391,9 +354,6 @@ class FlexibleTreeLayout extends ChangeNotifier {
   }
 
   void _calculateCordinates() {
-    // sort nodes by depth
-    // nodes.sort((a, b) => a.depth.compareTo(b.depth));
-
     for (var node in nodes) {
       // use nodeSide + offset
 

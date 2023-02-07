@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:math';
 
 import 'package:flexible_tree_layout/flexible_tree_layout.dart';
@@ -29,6 +30,7 @@ class _GenerateRandomTreesState extends State<GenerateRandomTrees> {
 
   var i = 10;
   int nexnum = 100;
+  ValueNotifier<int> graphlength = ValueNotifier(0);
 
   @override
   void initState() {
@@ -37,8 +39,22 @@ class _GenerateRandomTreesState extends State<GenerateRandomTrees> {
     setState(() {
       // i > 20 ? i =20 : i++;
 
+      Timer.periodic(Duration(milliseconds: 3333), (timer) {
+
+
+          Node n1 = graph!.nodes.firstWhere((element) => element.name == "1");
+          Node n3 = graph!.nodes.firstWhere((element) => element.name == "3");
+          Node n14 = graph!.nodes.firstWhere((element) => element.name == "11");
+
+          var p = graph!.findAllPathsOneWay(n1, n3);
+          var p1 = graph!.findAllPathsOneWay(n1, n14);
+
+           graph!.filter(p + p1);
+
+      });
+
       // random i between 5 and 15
-      i = Random().nextInt(10) + 45;
+      i = Random().nextInt(10) + 15;
 
       // random double 100-150
 
@@ -73,12 +89,10 @@ class _GenerateRandomTreesState extends State<GenerateRandomTrees> {
 
       var randomOffset = Random().nextDouble() * 100;
 
-      print("reload page");
-
       graph = FlexibleTreeLayout(
           // nodeSize:
           //     Size(120,60), // the size of each nodes
-          offset: const Offset(30, 30), // the offset between each level
+          offset: const Offset(30, 60), // the offset between each level
           nodes: myNodes,
           // flipAxis: true,
           // vertical: false,
@@ -92,86 +106,102 @@ class _GenerateRandomTreesState extends State<GenerateRandomTrees> {
 
   @override
   Widget build(BuildContext context) {
-    // if (graph == null) {
-    //   return const Center(child: CircularProgressIndicator());
-    // }
-
     graph!.addListener(() {
-      setState(() {});
+      setState(() {
+        graph!.edges.forEach((element) {
+          print("from to ${element.from.name} to ${element.to.name}");
+        });
+
+        graphlength.value = graph!.nodes.length;
+      });
     });
 
     return Scaffold(
-      floatingActionButton: FloatingActionButton(onPressed: () {
-        Node target = graph!.nodes[// random int between 0 and 10
-            Random().nextInt(graph!.nodes.length-1)];
+      // floatingActionButton: FloatingActionButton(onPressed: () {
+      //   setState(() {
+      //     Node target = graph!.nodes[// random int between 0 and 10
+      //         Random().nextInt(graph!.nodes.length - 1)];
 
-        Node n1 = Node.config(name: '2a', size: const Size(50, 50));
-        graph!.addNode(n1);
-        graph!.edges += [Edge(target, n1)];
-        graph!.calculate();
-      }),
+      //     // Node n1 = Node.config(name: '2a', size: const Size(50, 50));
+      //     // graph!.addNode(n1);
+      //     // graph!.edges += [Edge(target, n1)];
+      //     // graph!.calculate();
+
+      //     Node n1 = graph!.nodes.firstWhere((element) => element.name == "1");
+      //     Node n3 = graph!.nodes.firstWhere((element) => element.name == "3");
+      //     Node n14 = graph!.nodes.firstWhere((element) => element.name == "11");
+
+      //     var p = graph!.findAllPathsOneWay(n1, n3);
+      //     var p1 = graph!.findAllPathsOneWay(n1, n14);
+
+      //     graph!.filter(p + p1);
+      //   });
+      // }),
       body: SizedBox(
         width: MediaQuery.of(context).size.width,
         height: MediaQuery.of(context).size.height,
         child: Stack(
           children: [
-            InteractiveViewer(
-              boundaryMargin: EdgeInsets.zero,
-              minScale: 0.1,
-              panAxis: PanAxis.free,
-              child: Stack(
-                children: [
-                  Positioned(
-                    // note: the position of the custom painter that draw the lines
-                    // needs to be the same as the box rendering of the nodes above
-                    // there are other ways to do this, but this is an easy way to get started
-                    left: 0,
-                    top: 0,
-                    child: CustomPaint(
-                      painter: MyPainter(g: graph!),
-                    ),
-                  ),
-                  // an easy way to iterate over the calculated positioned and place the widgets in a stack
-                  // with positioned() and the x,y from the graph
-                  ...graph!.nodes.map((node) {
-                    return Builder(builder: (context) {
-                      return Positioned(
-                        left: node.x,
-                        top: node.y,
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(10),
-                            border: Border.all(color: Colors.grey),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.grey.withOpacity(0.2),
-                                spreadRadius: 5,
-                                blurRadius: 7,
-                                offset: const Offset(
-                                    0, 3), // changes position of shadow
-                              ),
-                            ],
-                          ),
-                          width: node.size.width,
-                          height: node.size.height,
-                          child: Builder(builder: (context) {
-                            // random bool to decide if the text should be rendered or not
-                            // this is just to show how to use the configuration map
+            Stack(
+              children: [
+                Positioned(
+                  // note: the position of the custom painter that draw the lines
+                  // needs to be the same as the box rendering of the nodes above
+                  // there are other ways to do this, but this is an easy way to get started
+                  left: 0,
+                  top: 0,
+                  child: Builder(builder: (context) {
+                    print(graphlength.value);
 
-                            return Center(
-                              child: Text(
-                                node.name,
-                                style: const TextStyle(color: Colors.black),
-                              ),
-                            );
-                          }),
+                    return CustomPaint(
+                      key: const ValueKey('custompaint'),
+                      painter: MyPainter(
+                          g: graph!,
+                          edges: graph!.edges,
+                          graphlength: graphlength),
+                    );
+                  }),
+                ),
+                // an easy way to iterate over the calculated positioned and place the widgets in a stack
+                // with positioned() and the x,y from the graph
+                ...graph!.nodes.map((node) {
+                  return Builder(builder: (context) {
+                    return Positioned(
+                      left: node.x,
+                      top: node.y,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(10),
+                          border: Border.all(color: Colors.grey),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey.withOpacity(0.2),
+                              spreadRadius: 5,
+                              blurRadius: 7,
+                              offset: const Offset(
+                                  0, 3), // changes position of shadow
+                            ),
+                          ],
                         ),
-                      );
-                    });
-                  }).toList(),
-                ],
-              ),
+                        width: node.size.width,
+                        height: node.size.height,
+                        child: Builder(builder: (context) {
+                          // random bool to decide if the text should be rendered or not
+                          // this is just to show how to use the configuration map
+
+                          return Center(
+                            child: Text(
+                              node.name,
+                              style: const TextStyle(color: Colors.black),
+                            ),
+                          );
+                        }),
+                      ),
+                    );
+                  });
+                }).toList(),
+              ],
             ),
           ],
         ),
@@ -187,15 +217,20 @@ class _GenerateRandomTreesState extends State<GenerateRandomTrees> {
 
 class MyPainter extends CustomPainter {
   FlexibleTreeLayout g;
-
-  MyPainter({required this.g});
+  List<Edge> edges;
+  Key? key;
+  Listenable? repaint;
+  MyPainter(
+      {required this.g,
+      this.key,
+      required this.edges,
+      required ValueNotifier<int> graphlength})
+      : super(repaint: graphlength);
   @override
   void paint(Canvas canvas, Size size) {
-    bool r = Random().nextBool();
-    int lineRandom = Random().nextInt(44);
-
-    for (var edge in g.edges) {
+    for (var edge in edges) {
       // random double between 1-3
+
       double r = Random().nextDouble() * 3 + 1;
 
       // lineRandom 0-100
@@ -264,5 +299,7 @@ class MyPainter extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(CustomPainter oldDelegate) => false;
+  bool shouldRepaint(CustomPainter oldDelegate) {
+    return true;
+  }
 }
