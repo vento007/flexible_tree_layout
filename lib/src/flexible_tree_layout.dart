@@ -20,6 +20,7 @@ class FlexibleTreeLayout extends ChangeNotifier {
   Offset offset = (Offset.zero);
   bool centerLayout;
   ftlOrientation orientation;
+  List<List<Node>> predefinedPaths = [];
 
   // FlexibleTreeLayout(
   //     {this.centerLayout = true,
@@ -38,6 +39,7 @@ class FlexibleTreeLayout extends ChangeNotifier {
       {this.centerLayout = true,
       this.orientation = ftlOrientation.vertical,
       required this.offset,
+      this.predefinedPaths = const [],
       required this.nodes,
       required this.edges}) {
     _main();
