@@ -8,14 +8,13 @@ class Node<T> {
   int mody = 0;
   double x = 0;
   double y = 0;
-  
+
   int depth = 0;
   int topology = 0;
   int insertorder = 0;
   Size size;
   T? object;
-    int modxShift;
-
+  int modxShift;
 
   Offset rightCenter = Offset.zero;
   Offset leftCenter = Offset.zero;
@@ -30,7 +29,8 @@ class Node<T> {
   final Map<String, dynamic>? configuration;
 
   /// use this constructor if you don't want to pass in a configuration.
-  Node(this.name, {this.size = Size.zero, this.modxShift = 0}) : configuration = null;
+  Node(this.name, {this.size = Size.zero, this.modxShift = 0})
+      : configuration = null;
 
   /// use this constructor if you have custom configuration. format of the configuration is Map<String, dynamic>
   Node.config(
@@ -40,46 +40,14 @@ class Node<T> {
       this.object,
       this.configuration = const {}});
 
-  // copywith with all
-  // Node copyWith({
-  //   String? name,
-  //   int? modx,
-  //   int? mody,
-  //   double? x,
-  //   double? y,
-  //   List<Node>? parents,
-  //   List<Node>? children,
-  //   int? depth,
-  //   int? topology,
-  //   int? insertorder,
-  //   Size size = Size.zero,
-  //   Offset? rightCenter,
-  //   Offset? leftCenter,
-  //   Offset? topCenter,
-  //   Offset? bottomCenter,
-  //   int? childrenCount,
-  //   Map<String, dynamic>? configuration,
-  // }) {
-  //   return Node.config(
-  //     name: name ?? this.name,
-  //     configuration: configuration ?? this.configuration,
-  //   )
-  //     ..modx = modx ?? this.modx
-  //     ..mody = mody ?? this.mody
-  //     ..x = x ?? this.x
-  //     ..y = y ?? this.y
-  //     ..parents = parents ?? this.parents
-  //     ..children = children ?? this.children
-  //     ..depth = depth ?? this.depth
-  //     ..size =   this.size
-  //     ..topology = topology ?? this.topology
-  //     ..insertorder = insertorder ?? this.insertorder
-  //     ..rightCenter = rightCenter ?? this.rightCenter
-  //     ..leftCenter = leftCenter ?? this.leftCenter
-  //     ..topCenter = topCenter ?? this.topCenter
-  //     ..bottomCenter = bottomCenter ?? this.bottomCenter
-  //     ..childrenCount = childrenCount ?? this.childrenCount;
-  // }
+  // configuration set
+  void setConfiguration(Map<String, dynamic> configuration) {
+    // remove if already exists
+    this
+        .configuration!
+        .removeWhere((key, value) => configuration.containsKey(key));
+    this.configuration!.addAll(configuration);
+  }
 
   // copy with all
 
@@ -123,9 +91,8 @@ class Node<T> {
       ..childrenCount = childrenCount ?? this.childrenCount;
   }
 
-bool get hasChildren => children.isNotEmpty;
-bool get hasParents => parents.isNotEmpty;
-
+  bool get hasChildren => children.isNotEmpty;
+  bool get hasParents => parents.isNotEmpty;
 
   @override
   String toString() {
