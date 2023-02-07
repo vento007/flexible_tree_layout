@@ -83,21 +83,11 @@ class FlexibleTreeLayout extends ChangeNotifier {
   }
 
   void addNode(Node node) {
-    var l = nodes.length;
-
-    Node newNode = node.copyWith(insertorder: l);
-    if (nodeExist(newNode)) {
-      return;
-    }
-    nodes.add(newNode);
+    nodes += [node];
   }
 
   void addEdge(Node from, Node to) {
-    Edge newEdge = Edge(from, to);
-    if (edgeExist(newEdge)) {
-      return;
-    }
-    edges.add(newEdge);
+    edges += [Edge(from, to)];
   }
 
   double get totalWidth {
@@ -115,23 +105,6 @@ class FlexibleTreeLayout extends ChangeNotifier {
   }
 
   double get totalHeight {
-    // double totalHeight = 0;
-    // double lastHeight = 0;
-
-    // for (var node in nodes) {
-    //   if (node.y > totalHeight) {
-
-    //     totalHeight = node.y;
-    //     lastHeight = node.size.height;
-
-    //   }
-    // add last
-    // }
-
-    // add offset
-
-    // return totalHeight + lastHeight + 100;
-
     double totalHeight = 0;
     double lastHeight = 0;
 
@@ -164,7 +137,6 @@ class FlexibleTreeLayout extends ChangeNotifier {
   }
 
   void _main() {
-
     if (nodes.isEmpty) {
       return;
     }
@@ -173,33 +145,35 @@ class FlexibleTreeLayout extends ChangeNotifier {
       return;
     }
 
-    _bfs();
+ 
+    calculate();
 
-    // set x position modifier
-    _setModx();
+    // updateInsertOrder();
+    // _bfs();
+    // _setModx();
 
-    // shiftDepths(5);
+    // _calculateCordinates();
+    // _calculateEdgeBorderPoints();
 
-    // iterate all and set modx to the modx value
-    for (var node in nodes) {
-      node.modx += node.modxShift;
+ 
+
+   
+  }
+
+  void calculate() {
+    for (Node n in nodes) {
+      n.x = 0;
+      n.y = 0;
     }
 
-    _calculateCordinates();
-    _calculateEdgeBorderPoints();
-  }
-
-  void reCalculate() {
     updateInsertOrder();
     _bfs();
-
-     _setModx();
-
+    _setModx();
     _calculateCordinates();
     _calculateEdgeBorderPoints();
+
     notifyListeners();
   }
-
 
   int findMaxDepth() {
     int maxDepth = 0;
@@ -373,151 +347,6 @@ class FlexibleTreeLayout extends ChangeNotifier {
     }
   }
 
-  // void _bfs() {
-  //   for (var node in nodes) {
-  //     node.depth = -1;
-  //     node.topology = 0;
-  //   }
-  //   int topologyCounter = 0;
-  //   Queue<Node> queue = Queue<Node>();
-  //   queue.add(nodes[0]);
-  //   nodes[0].depth = 0;
-  //   while (queue.isNotEmpty) {
-  //     Node current = queue.removeFirst();
-  //     current.topology = topologyCounter++;
-  //     for (Edge edge in edges) {
-  //       if (edge.from == current) {
-  //         if (edge.to.depth == -1) {
-  //           edge.to.depth = current.depth + 1;
-  //           if (!current.children.contains(edge.to)) {
-  //             current.children.add(edge.to);
-  //           }
-  //           edge.to.parents.add(current);
-  //           queue.add(edge.to);
-  //         }
-  //       } else if (edge.to == current) {
-  //         if (!current.parents.contains(edge.from)) {
-  //           current.parents.add(edge.from);
-  //         }
-  //         if (!edge.from.children.contains(current)) {
-  //           edge.from.children.add(current);
-  //         }
-  //       }
-  //     }
-  //   }
-  //   // Sort nodes by depth and topology
-  //   nodes.sort((a, b) {
-  //     if (a.depth == b.depth) {
-  //       return a.topology.compareTo(b.topology);
-  //     }
-  //     return a.depth.compareTo(b.depth);
-  //   });
-
-  //   findMaxDepth();
-
-  //   Map<int, List<Node>> nodesByDepth = {
-  //     for (var node in nodes) node.depth: [node]
-  //   };
-
-  //   int nodeCounter = 0;
-  //   for (var i = 0; i <= _maxDepth; i++) {
-  //     List<Node> nodesAtDepth = nodesByDepth[i]!;
-  //     double currentDepthX = 0;
-  //     double shift = 0;
-
-  //     if (nodesAtDepth.length > 5) {
-  //       nodeCounter = 0;
-  //       shift = (nodesAtDepth.length / 5).floor() * nodes[i].size.height;
-  //     }
-
-  //     double currentY = 0;
-
-  //     for (var j = 0; j < nodesAtDepth.length; j++) {
-  //       Node node = nodesAtDepth[j];
-
-  //       if (nodeCounter % 5 == 0 && nodeCounter > 0) {
-  //         currentDepthX = 0;
-  //       }
-
-  //       node.x = currentDepthX;
-  //       node.y = currentY + shift;
-
-  //       currentDepthX += node.size.width + offset.dx;
-  //       nodeCounter++;
-  //     }
-
-  //     currentY += nodes[i].size.height + offset.dy;
-  //   }
-  // }
-
-// shifted not completed
-  // void _bfsCustomX() {
-  //   for (var node in nodes) {
-  //     node.depth = -1;
-  //     node.topology = 0;
-  //   }
-  //   int topologyCounter = 0;
-  //   Queue<Node> queue = Queue<Node>();
-  //   queue.add(nodes[0]);
-  //   nodes[0].depth = 0;
-  //   int nodeCount = 0;
-
-  //   int icounter = 1;
-  //   Map<int, int> nodeCountMap = {};
-  //   while (queue.isNotEmpty) {
-  //     Node current = queue.removeFirst();
-  //     current.topology = topologyCounter++;
-  //     nodeCount++;
-
-  //     // store nodeCount in the nodeCountMap
-  //     if (nodeCountMap.containsKey(nodeCount)) {
-  //       nodeCountMap[nodeCount] = nodeCountMap[nodeCount]! + 1;
-  //     } else {
-  //       nodeCountMap[nodeCount] = 0;
-  //     }
-
-  //     if (nodeCount != 1) {
-  //       current.depth += nodeCountMap[nodeCount]!;
-  //     } else {}
-
-  //     if (nodeCount > 4) {
-  //       nodeCount = 0;
-  //       icounter++;
-  //     }
-
-  //     // store nodeCount in a Map<int, int> with that are nodecount and how many times they occur
-
-  //     for (Edge edge in edges) {
-  //       if (edge.from == current) {
-  //         if (edge.to.depth == -1) {
-  //           edge.to.depth = current.depth + 1;
-  //           if (!current.children.contains(edge.to)) {
-  //             current.children.add(edge.to);
-  //           }
-  //           edge.to.parents.add(current);
-  //           queue.add(edge.to);
-  //         }
-  //       } else if (edge.to == current) {
-  //         if (!current.parents.contains(edge.from)) {
-  //           current.parents.add(edge.from);
-  //         }
-  //         if (!edge.from.children.contains(current)) {
-  //           edge.from.children.add(current);
-  //         }
-  //       }
-  //     }
-  //   }
-  //   // Sort nodes by depth and topology
-  //   nodes.sort((a, b) {
-  //     if (a.depth == b.depth) {
-  //       return a.topology.compareTo(b.topology);
-  //     }
-  //     return a.depth.compareTo(b.depth);
-  //   });
-
-  //   findMaxDepth();
-  // }
-
   void _bfs() {
     for (var node in nodes) {
       node.depth = -1;
@@ -563,7 +392,7 @@ class FlexibleTreeLayout extends ChangeNotifier {
 
   void _calculateCordinates() {
     // sort nodes by depth
-    nodes.sort((a, b) => a.depth.compareTo(b.depth));
+    // nodes.sort((a, b) => a.depth.compareTo(b.depth));
 
     for (var node in nodes) {
       // use nodeSide + offset
