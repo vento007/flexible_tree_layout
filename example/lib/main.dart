@@ -35,70 +35,63 @@ class _GenerateRandomTreesState extends State<GenerateRandomTrees> {
   @override
   void initState() {
     // every second
-    // Timer.periodic(const Duration(milliseconds: 800), (timer) {
-    setState(() {
-      // i > 20 ? i =20 : i++;
+    // random i between 5 and 15
+    i = Random().nextInt(10) + 15;
 
-      Timer.periodic(Duration(milliseconds: 3333), (timer) {
+    // random double 100-150
 
+    i++;
+    List<Node> myNodes = List.generate(i, (index) {
+      // randomDouble between 0 and 100
 
-          Node n1 = graph!.nodes.firstWhere((element) => element.name == "1");
-          Node n3 = graph!.nodes.firstWhere((element) => element.name == "3");
-          Node n14 = graph!.nodes.firstWhere((element) => element.name == "11");
+      // random color
+      ColorModel color = randomColor();
 
-          var p = graph!.findAllPathsOneWay(n1, n3);
-          var p1 = graph!.findAllPathsOneWay(n1, n14);
+      return Node.config(
+          name: (index + 1).toString(),
+          size: const Size(50, 50.0),
+          configuration: {
+            'color': color.color,
+          }).copyWith(backgroundColor: color.color);
+    });
 
-           graph!.filter(p + p1);
+    List<Edge> myEdges = [];
 
-      });
-
-      // random i between 5 and 15
-      i = Random().nextInt(10) + 15;
-
-      // random double 100-150
-
-      i++;
-      List<Node> myNodes = List.generate(i, (index) {
-        // randomDouble between 0 and 100
-
-        // random color
-        ColorModel color = randomColor();
-
-        return Node.config(
-            name: (index + 1).toString(),
-            size: const Size(50, 50.0),
-            configuration: {
-              'color': color.color,
-            });
-      });
-
-      List<Edge> myEdges = [];
-
-      for (var i = 0; i < myNodes.length; i++) {
-        if (i == 0) {
-          continue;
-        }
-
-        int random = Random().nextInt(i);
-
-        myEdges.add(Edge(myNodes[random], myNodes[i]));
+    for (var i = 0; i < myNodes.length; i++) {
+      if (i == 0) {
+        continue;
       }
 
-      // random double 125 to 200
+      int random = Random().nextInt(i);
 
-      var randomOffset = Random().nextDouble() * 100;
+      myEdges.add(
+          Edge(myNodes[random], myNodes[i], lineColor: randomColor().color));
+    }
 
-      graph = FlexibleTreeLayout(
-          // nodeSize:
-          //     Size(120,60), // the size of each nodes
-          offset: const Offset(30, 60), // the offset between each level
-          nodes: myNodes,
-          // flipAxis: true,
-          // vertical: false,
-          orientation: ftlOrientation.vertical,
-          centerLayout: true,
-          edges: myEdges);
+    // random double 125 to 200
+
+    var randomOffset = Random().nextDouble() * 100;
+    graph = FlexibleTreeLayout(
+        // nodeSize:
+        //     Size(120,60), // the size of each nodes
+        offset: const Offset(30, 60), // the offset between each level
+        nodes: myNodes,
+        // flipAxis: true,
+        // vertical: false,
+        orientation: ftlOrientation.vertical,
+        centerLayout: true,
+        edges: myEdges);
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      setState(() {
+        Node n1 = graph!.nodes.firstWhere((element) => element.name == "1");
+        Node n3 = graph!.nodes.firstWhere((element) => element.name == "3");
+        Node n14 = graph!.nodes.firstWhere((element) => element.name == "11");
+
+        var p = graph!.findAllPathsOneWay(n1, n3);
+        var p1 = graph!.findAllPathsOneWay(n1, n14);
+
+        graph!.filter(p + p1);
+      });
     });
 
     super.initState();
@@ -171,7 +164,7 @@ class _GenerateRandomTreesState extends State<GenerateRandomTrees> {
                       top: node.y,
                       child: Container(
                         decoration: BoxDecoration(
-                          color: Colors.white,
+                          color: node.backgroundColor,
                           borderRadius: BorderRadius.circular(10),
                           border: Border.all(color: Colors.grey),
                           boxShadow: [
@@ -236,7 +229,7 @@ class MyPainter extends CustomPainter {
       // lineRandom 0-100
 
       final p2 = Paint()
-        ..color = Colors.black
+        ..color = edge.lineColor
         ..strokeWidth = 1
         ..style = PaintingStyle.stroke;
 
