@@ -156,6 +156,64 @@ class FlexibleTreeLayout extends ChangeNotifier {
     return maxDepth;
   }
 
+
+Set<Node> findAllConnections(Node node) {
+  Set<Node> result = {node};
+  Queue<Node> queue = Queue();
+  queue.add(node);
+
+  while (queue.isNotEmpty) {
+    Node current = queue.removeFirst();
+    for (Edge edge in edges) {
+      if (edge.from == current) {
+        Node toNode = edge.to;
+        if (!result.contains(toNode)) {
+          result.add(toNode);
+          queue.add(toNode);
+        }
+      } else if (edge.to == current) {
+        Node fromNode = edge.from;
+        if (!result.contains(fromNode)) {
+          result.add(fromNode);
+          queue.add(fromNode);
+        }
+      }
+    }
+  }
+  return result;
+}
+
+
+void filterOnAllConnections(Set<Node> theNodes) {
+    // copy to reset
+    nodesReset = nodes;
+    edgesReset = edges;
+
+    // tmp list
+
+    List<Node> nodesTmp = [];
+    List<Edge> edgesTmp = [];
+
+       for (Node node in theNodes) {
+        if (nodeExist(node) && !nodesTmp.contains(node)) {
+          nodesTmp.add(node);
+        }
+      }
+      for (Edge edge in edges) {
+        if (nodeExist(edge.from) && nodeExist(edge.to)) {
+          edgesTmp.add(edge);
+        }
+      }
+  
+    nodes = nodesTmp;
+    edges = edgesTmp;
+    updateInsertOrder();
+    calculate();
+     
+    notifyListeners();
+  }
+
+
   void filter(List<List<Node>> paths) {
     // copy to reset
     nodesReset = nodes;
