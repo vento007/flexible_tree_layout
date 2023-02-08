@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
 /// Each node in the graph is represented by this class. use the default constructor if you don't want to pass any configuration, if you have need custom configuration, use the Node.config() constructor.
@@ -27,6 +28,18 @@ class Node<T> {
   int childrenCount = 0;
 
   final Map<String, dynamic>? configuration;
+  Color backgroundColor = Colors.white;
+  Color textColor = Colors.black;
+  BorderRadius borderRadius = BorderRadius.circular(10);
+  Border border = Border.all(color: Colors.grey);
+  List<BoxShadow> boxShadow = [
+    BoxShadow(
+      color: Colors.grey.withOpacity(0.2),
+      spreadRadius: 5,
+      blurRadius: 7,
+      offset: const Offset(0, 3), // changes position of shadow
+    ),
+  ];
 
   /// use this constructor if you don't want to pass in a configuration.
   Node(this.name, {this.size = Size.zero, this.modxShift = 0})
@@ -69,6 +82,11 @@ class Node<T> {
     Offset? bottomCenter,
     int? childrenCount,
     Map<String, dynamic>? configuration,
+    Color? backgroundColor,
+    Color? textColor,
+    BorderRadius? borderRadius,
+    Border? border,
+    List<BoxShadow>? boxShadow,
   }) {
     return Node.config(
       name: name ?? this.name,
@@ -88,7 +106,12 @@ class Node<T> {
       ..leftCenter = leftCenter ?? this.leftCenter
       ..topCenter = topCenter ?? this.topCenter
       ..bottomCenter = bottomCenter ?? this.bottomCenter
-      ..childrenCount = childrenCount ?? this.childrenCount;
+      ..childrenCount = childrenCount ?? this.childrenCount
+      ..backgroundColor = backgroundColor ?? this.backgroundColor
+      ..textColor = textColor ?? this.textColor
+      ..borderRadius = borderRadius ?? this.borderRadius
+      ..border = border ?? this.border
+      ..borderRadius = borderRadius ?? this.borderRadius;
   }
 
   bool get hasChildren => children.isNotEmpty;
