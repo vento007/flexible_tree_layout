@@ -157,61 +157,61 @@ class FlexibleTreeLayout extends ChangeNotifier {
   }
 
 
-Set<Node> findAllConnections(Node node) {
-  Set<Node> result = {node};
-  Queue<Node> queue = Queue();
-  queue.add(node);
+// Set<Node> findAllConnections(Node node) {
+//   Set<Node> result = {node};
+//   Queue<Node> queue = Queue();
+//   queue.add(node);
 
-  while (queue.isNotEmpty) {
-    Node current = queue.removeFirst();
-    for (Edge edge in edges) {
-      if (edge.from == current) {
-        Node toNode = edge.to;
-        if (!result.contains(toNode)) {
-          result.add(toNode);
-          queue.add(toNode);
-        }
-      } else if (edge.to == current) {
-        Node fromNode = edge.from;
-        if (!result.contains(fromNode)) {
-          result.add(fromNode);
-          queue.add(fromNode);
-        }
-      }
-    }
-  }
-  return result;
-}
+//   while (queue.isNotEmpty) {
+//     Node current = queue.removeFirst();
+//     for (Edge edge in edges) {
+//       if (edge.from == current) {
+//         Node toNode = edge.to;
+//         if (!result.contains(toNode)) {
+//           result.add(toNode);
+//           queue.add(toNode);
+//         }
+//       } else if (edge.to == current) {
+//         Node fromNode = edge.from;
+//         if (!result.contains(fromNode)) {
+//           result.add(fromNode);
+//           queue.add(fromNode);
+//         }
+//       }
+//     }
+//   }
+//   return result;
+// }
 
 
-void filterOnAllConnections(Set<Node> theNodes) {
-    // copy to reset
-    nodesReset = nodes;
-    edgesReset = edges;
+// void filterOnAllConnections(Set<Node> theNodes) {
+//     // copy to reset
+//     nodesReset = nodes;
+//     edgesReset = edges;
 
-    // tmp list
+//     // tmp list
 
-    List<Node> nodesTmp = [];
-    List<Edge> edgesTmp = [];
+//     List<Node> nodesTmp = [];
+//     List<Edge> edgesTmp = [];
 
-       for (Node node in theNodes) {
-        if (nodeExist(node) && !nodesTmp.contains(node)) {
-          nodesTmp.add(node);
-        }
-      }
-      for (Edge edge in edges) {
-        if (nodeExist(edge.from) && nodeExist(edge.to)) {
-          edgesTmp.add(edge);
-        }
-      }
+//        for (Node node in theNodes) {
+//         if (nodeExist(node) && !nodesTmp.contains(node)) {
+//           nodesTmp.add(node);
+//         }
+//       }
+//       for (Edge edge in edges) {
+//         if (nodeExist(edge.from) && nodeExist(edge.to)) {
+//           edgesTmp.add(edge);
+//         }
+//       }
   
-    nodes = nodesTmp;
-    edges = edgesTmp;
-    updateInsertOrder();
-    calculate();
+//     nodes = nodesTmp;
+//     edges = edgesTmp;
+//     updateInsertOrder();
+//     calculate();
      
-    notifyListeners();
-  }
+//     notifyListeners();
+//   }
 
 
   void filter(List<List<Node>> paths) {
@@ -231,14 +231,25 @@ void filterOnAllConnections(Set<Node> theNodes) {
         }
       }
       for (Edge edge in edges) {
-        if (nodeExist(edge.from) && nodeExist(edge.to)) {
+
+        // remove all edges that are not have both nodes in the tmp list
+        if (nodesTmp.contains(edge.from) && nodesTmp.contains(edge.to)) {
           edgesTmp.add(edge);
         }
+
+
+        // if (nodeExist(edge.from) && nodeExist(edge.to)) {
+        //   edgesTmp.add(edge);
+        // }
       }
     }
  
     nodes = nodesTmp;
     edges = edgesTmp;
+
+
+
+
     updateInsertOrder();
     calculate();
      
