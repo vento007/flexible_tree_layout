@@ -310,8 +310,8 @@ class FlexibleTreeLayout extends ChangeNotifier {
 
       // if orientation is vertical
       if (orientation == ftlOrientation.vertical) {
-        node.x = th + (node.depth * (offset.dx));
-        node.y = ((node.modx) * (node.size.width + offset.dy));
+         node.x =   (node.depth * (node.size.width+ offset.dx) );
+        node.y = ((node.modx) * (node.size.height + offset.dy));
       }
     }
 

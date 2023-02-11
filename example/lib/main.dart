@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'dart:math';
 
 import 'package:flexible_tree_layout/flexible_tree_layout.dart';
@@ -34,40 +33,20 @@ class _GenerateRandomTreesState extends State<GenerateRandomTrees> {
 
   @override
   void initState() {
-    // every second
-    // Timer.periodic(const Duration(milliseconds: 800), (timer) {
     setState(() {
-      // i > 20 ? i =20 : i++;
-
-      Timer.periodic(Duration(milliseconds: 3333), (timer) {
-
-
-          Node n1 = graph!.nodes.firstWhere((element) => element.name == "1");
-          Node n3 = graph!.nodes.firstWhere((element) => element.name == "3");
-          Node n14 = graph!.nodes.firstWhere((element) => element.name == "11");
-
-          var p = graph!.findAllPathsOneWay(n1, n3);
-          var p1 = graph!.findAllPathsOneWay(n1, n14);
-
-           graph!.filter(p + p1);
-
-      });
-
-      // random i between 5 and 15
       i = Random().nextInt(10) + 15;
-
-      // random double 100-150
 
       i++;
       List<Node> myNodes = List.generate(i, (index) {
         // randomDouble between 0 and 100
+        var r = Random().nextDouble() * 100;
 
         // random color
         ColorModel color = randomColor();
 
         return Node.config(
             name: (index + 1).toString(),
-            size: const Size(50, 50.0),
+            size: const Size(75, 75.0),
             configuration: {
               'color': color.color,
             });
@@ -85,17 +64,9 @@ class _GenerateRandomTreesState extends State<GenerateRandomTrees> {
         myEdges.add(Edge(myNodes[random], myNodes[i]));
       }
 
-      // random double 125 to 200
-
-      var randomOffset = Random().nextDouble() * 100;
-
       graph = FlexibleTreeLayout(
-          // nodeSize:
-          //     Size(120,60), // the size of each nodes
-          offset: const Offset(30, 60), // the offset between each level
+          offset: const Offset(25, 25),
           nodes: myNodes,
-          // flipAxis: true,
-          // vertical: false,
           orientation: ftlOrientation.vertical,
           centerLayout: true,
           edges: myEdges);
@@ -106,37 +77,7 @@ class _GenerateRandomTreesState extends State<GenerateRandomTrees> {
 
   @override
   Widget build(BuildContext context) {
-    graph!.addListener(() {
-      setState(() {
-        graph!.edges.forEach((element) {
-          print("from to ${element.from.name} to ${element.to.name}");
-        });
-
-        graphlength.value = graph!.nodes.length;
-      });
-    });
-
     return Scaffold(
-      // floatingActionButton: FloatingActionButton(onPressed: () {
-      //   setState(() {
-      //     Node target = graph!.nodes[// random int between 0 and 10
-      //         Random().nextInt(graph!.nodes.length - 1)];
-
-      //     // Node n1 = Node.config(name: '2a', size: const Size(50, 50));
-      //     // graph!.addNode(n1);
-      //     // graph!.edges += [Edge(target, n1)];
-      //     // graph!.calculate();
-
-      //     Node n1 = graph!.nodes.firstWhere((element) => element.name == "1");
-      //     Node n3 = graph!.nodes.firstWhere((element) => element.name == "3");
-      //     Node n14 = graph!.nodes.firstWhere((element) => element.name == "11");
-
-      //     var p = graph!.findAllPathsOneWay(n1, n3);
-      //     var p1 = graph!.findAllPathsOneWay(n1, n14);
-
-      //     graph!.filter(p + p1);
-      //   });
-      // }),
       body: SizedBox(
         width: MediaQuery.of(context).size.width,
         height: MediaQuery.of(context).size.height,
@@ -151,10 +92,7 @@ class _GenerateRandomTreesState extends State<GenerateRandomTrees> {
                   left: 0,
                   top: 0,
                   child: Builder(builder: (context) {
-                    print(graphlength.value);
-
                     return CustomPaint(
-                      key: const ValueKey('custompaint'),
                       painter: MyPainter(
                           g: graph!,
                           edges: graph!.edges,
@@ -253,48 +191,6 @@ class MyPainter extends CustomPainter {
           toNode.topCenter.dx,
           toNode.topCenter.dy);
       canvas.drawPath(path, p2);
-      // }
-
-      // if (lineRandom >= 5 && lineRandom < 30) {
-      //   // 1. find diff between both nodes
-      //   double diffX = toNode.topCenter.dx - fromNode.bottomCenter.dx;
-      //   double diffY = toNode.topCenter.dy - fromNode.bottomCenter.dy;
-
-      //   // draw line to the middle of the node
-
-      //   var p = Path();
-      //   p.moveTo(fromNode.bottomCenter.dx, fromNode.bottomCenter.dy);
-      //   p.lineTo(
-      //       fromNode.bottomCenter.dx, fromNode.bottomCenter.dy + diffY / 2);
-
-      //   p.lineTo(toNode.topCenter.dx, toNode.topCenter.dy - diffY / 2);
-
-      //   p.lineTo(toNode.topCenter.dx, toNode.topCenter.dy);
-
-      //   canvas.drawPath(p, p2);
-
-      // draw line from the middle of the node to the other node
-      // }
-
-      // if (lineRandom < 5) {
-      //   double distance = 80;
-      //   int numOfSegments = (distance / 4).floor();
-      //   double deltaX =
-      //       (toNode.topCenter.dx - fromNode.bottomCenter.dx) / numOfSegments;
-      //   double deltaY =
-      //       (toNode.topCenter.dy - fromNode.bottomCenter.dy) / numOfSegments;
-
-      //   for (int i = 0; i < numOfSegments; i++) {
-      //     if (i % 2 == 0) {
-      //       canvas.drawLine(
-      //           Offset(fromNode.bottomCenter.dx + deltaX * i,
-      //               fromNode.bottomCenter.dy + deltaY * i),
-      //           Offset(fromNode.bottomCenter.dx + deltaX * (i + 1),
-      //               fromNode.bottomCenter.dy + deltaY * (i + 1)),
-      //           p2);
-      //     }
-      //   }
-      // }
     }
   }
 
