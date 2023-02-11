@@ -40,16 +40,29 @@ class Node<T> {
       this.object,
       this.configuration = const {}});
 
-  // configuration set
-  void setConfiguration(Map<String, dynamic> configuration) {
-    // remove if already exists
-    this
+  
+    Node.empty() : configuration = null, name = '', size = Size.zero, modxShift = 0;
+
+
+
+   void setConfiguration(Map<String, dynamic> configuration) {
+     this
         .configuration!
         .removeWhere((key, value) => configuration.containsKey(key));
     this.configuration!.addAll(configuration);
   }
 
-  // copy with all
+
+@override
+bool operator ==(Object other) {
+  if (identical(this, other)) return true;
+  return other is Node && name == other.name;
+}
+
+@override
+int get hashCode => Object.hashAll([name]);
+
+
 
   Node copyWith({
     String? name,

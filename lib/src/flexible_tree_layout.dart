@@ -45,13 +45,13 @@ class FlexibleTreeLayout extends ChangeNotifier {
   }
 
   // get node
-  Node getNode(String name) {
+  Node? getNodeByName(String name) {
     for (Node n in nodes) {
       if (n.name == name) {
         return n;
       }
     }
-    return Node('');
+    return null;
   }
 
   bool nodeExist(Node node) {
@@ -156,70 +156,10 @@ class FlexibleTreeLayout extends ChangeNotifier {
     return maxDepth;
   }
 
-
-// Set<Node> findAllConnections(Node node) {
-//   Set<Node> result = {node};
-//   Queue<Node> queue = Queue();
-//   queue.add(node);
-
-//   while (queue.isNotEmpty) {
-//     Node current = queue.removeFirst();
-//     for (Edge edge in edges) {
-//       if (edge.from == current) {
-//         Node toNode = edge.to;
-//         if (!result.contains(toNode)) {
-//           result.add(toNode);
-//           queue.add(toNode);
-//         }
-//       } else if (edge.to == current) {
-//         Node fromNode = edge.from;
-//         if (!result.contains(fromNode)) {
-//           result.add(fromNode);
-//           queue.add(fromNode);
-//         }
-//       }
-//     }
-//   }
-//   return result;
-// }
-
-
-// void filterOnAllConnections(Set<Node> theNodes) {
-//     // copy to reset
-//     nodesReset = nodes;
-//     edgesReset = edges;
-
-//     // tmp list
-
-//     List<Node> nodesTmp = [];
-//     List<Edge> edgesTmp = [];
-
-//        for (Node node in theNodes) {
-//         if (nodeExist(node) && !nodesTmp.contains(node)) {
-//           nodesTmp.add(node);
-//         }
-//       }
-//       for (Edge edge in edges) {
-//         if (nodeExist(edge.from) && nodeExist(edge.to)) {
-//           edgesTmp.add(edge);
-//         }
-//       }
-  
-//     nodes = nodesTmp;
-//     edges = edgesTmp;
-//     updateInsertOrder();
-//     calculate();
-     
-//     notifyListeners();
-//   }
-
-
   void filter(List<List<Node>> paths) {
     // copy to reset
     nodesReset = nodes;
     edgesReset = edges;
-
-    // tmp list
 
     List<Node> nodesTmp = [];
     List<Edge> edgesTmp = [];
@@ -231,28 +171,19 @@ class FlexibleTreeLayout extends ChangeNotifier {
         }
       }
       for (Edge edge in edges) {
-
         // remove all edges that are not have both nodes in the tmp list
         if (nodesTmp.contains(edge.from) && nodesTmp.contains(edge.to)) {
           edgesTmp.add(edge);
         }
-
-
-        // if (nodeExist(edge.from) && nodeExist(edge.to)) {
-        //   edgesTmp.add(edge);
-        // }
       }
     }
- 
+
     nodes = nodesTmp;
     edges = edgesTmp;
 
-
-
-
     updateInsertOrder();
     calculate();
-     
+
     notifyListeners();
   }
 
@@ -262,47 +193,6 @@ class FlexibleTreeLayout extends ChangeNotifier {
     calculate();
     notifyListeners();
   }
-
-  // void positionNodes(List<Node> nodes, int maxDepth, double totalWidth) {
-  //   if (centerLayout == false) return;
-
-  //   for (int depth = 0; depth <= maxDepth; depth++) {
-  //     // filter out nodes that don't have the desired depth
-  //     List<Node> filteredNodes =
-  //         nodes.where((node) => node.depth == depth).toList();
-
-  //     int nodeCount = filteredNodes.length;
-  //     double nodeWidth = totalWidth / (nodeCount + 1);
-
-  //     for (int i = 0; i < nodeCount; i++) {
-  //       filteredNodes[i].x = (i + 1) * nodeWidth;
-  //     }
-  //   }
-
-  //   // shift everything left so that the leftmost node is at x = 0
-  //   double minX = double.infinity;
-  //   for (var node in nodes) {
-  //     if (node.x < minX) {
-  //       minX = node.x;
-  //     }
-  //   }
-
-  //   for (var node in nodes) {
-  //     node.x -= minX;
-  //   }
-
-  //   // shift everything so the topmost node is at y = 0
-  //   double minY = double.infinity;
-  //   for (var node in nodes) {
-  //     if (node.y < minY) {
-  //       minY = node.y;
-  //     }
-  //   }
-
-  //   for (var node in nodes) {
-  //     node.y -= minY;
-  //   }
-  // }
 
   void _setModx() {
     for (var depth = 0; depth <= _maxDepth; depth++) {
@@ -358,26 +248,6 @@ class FlexibleTreeLayout extends ChangeNotifier {
     }
     path.removeLast();
   }
-
-  // List<List<Node>> findAllPaths(Node node) {
-  //   List<List<Node>> paths = [];
-  //   List<Node> currentPath = [];
-  //   findPathsHelper(node, paths, currentPath);
-  //   return paths;
-  // }
-
-  // void findPathsHelper(
-  //     Node node, List<List<Node>> paths, List<Node> currentPath) {
-  //   currentPath.add(node);
-  //   if (!node.hasChildren) {
-  //     paths.add(List.from(currentPath));
-  //   } else {
-  //     for (Node child in node.children) {
-  //       findPathsHelper(child, paths, currentPath);
-  //     }
-  //   }
-  //   currentPath.removeLast();
-  // }
 
   void _bfs() {
     for (var node in nodes) {

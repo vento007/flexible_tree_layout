@@ -21,6 +21,16 @@ class Edge {
   /// use this constructor if you have custom configuration. format of the configuration is Map<String, dynamic>
   Edge.config(this.from, this.to, {required this.configuration});
 
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is Edge &&
+          runtimeType == other.runtimeType &&
+          from == other.from &&
+          to == other.to;
+
+
    @override
   String toString() {
     return 'Edge{from: $from, to: $to, configuration: $configuration}';
